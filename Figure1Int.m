@@ -99,7 +99,7 @@ function []=jitt_demo
         end
 
         % [interval] jitter, and tabulate synchrony counts
-        sample = 0:disc:(2*jitter_width);
+        sample = 0:disc:((2*jitter_width)-disc);
 
         syn_surr_int = zeros(1, length(num_jitter)); 
         syn_surrb_int = zeros(1, length(num_jitter));
@@ -109,14 +109,14 @@ function []=jitt_demo
 
             % interval jitter (interval length jitter_width*2) spikes for n1
             %this could technically enter an infinite loop
-            %win = jitter_width*2;
+            win = jitter_width*2;
             while true
                 %for i=1:length(n1)
                 %    perm(i) = datasample(jit_times, 1);
                 %end
                 %n1_jitt_int = (win)*floor(n1/(win)) + (win)*rand(1,length(n1));
                 %n1_jitt_int = round(n1_jitt_int, 3);
-                n1_jitt_int = (win)*floor(n1/(win)) + datasample(sample, length(n1));
+                n1_jitt_int = (win)*floor(n1/(win)) + randsample(sample, length(n1));
                 %display(n1_jitt_int);
                 %input('');
                 if length(unique(n1_jitt_int)) == length(n1)
