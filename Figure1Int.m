@@ -25,9 +25,9 @@ function []=jitt_demo
     %jit_times = 0:.001:(2*jitter_width);
     disc = .001;
 
-    frate1 = round(frate1*T);
-    frate2 = round(frate2*T);
-
+%    frate1 = round(frate1*T);
+%    frate2 = round(frate2*T);
+    
     clear pval pvalr pval_int pvalr_int
     for ccc=1:num_runs
 
@@ -109,6 +109,7 @@ function []=jitt_demo
 
             % interval jitter (interval length jitter_width*2) spikes for n1
             %this could technically enter an infinite loop
+
             win = jitter_width*2;
             while true
                 %for i=1:length(n1)
@@ -116,7 +117,8 @@ function []=jitt_demo
                 %end
                 %n1_jitt_int = (win)*floor(n1/(win)) + (win)*rand(1,length(n1));
                 %n1_jitt_int = round(n1_jitt_int, 3);
-                n1_jitt_int = (win)*floor(n1/(win)) + randsample(sample, length(n1));
+                n1_jitt_int = (win)*floor(n1/(win)) + datasample(sample, length(n1));
+                %display(n1);
                 %display(n1_jitt_int);
                 %input('');
                 if length(unique(n1_jitt_int)) == length(n1)
@@ -181,7 +183,7 @@ end
 %hist(pvalr,nb), title('Randomized pvals')
 
 
-function synch= synch_compute( n1,n2,synch_def,synch_range );
+%function synch= synch_compute( n1,n2,synch_def,synch_range );
 % computes sychrony between (spike time) vectors n1 and n2  
 % sync_def is radius for def of synchrony
 % synch_range is the 
@@ -191,6 +193,8 @@ function synch= synch_compute( n1,n2,synch_def,synch_range );
 %		synch=synch+sum( n2>=n1(j)-synch_def & n2<=n1(j)+synch_def );
 %	    end
 %	end            
+
+function synch = synch_compute(n1,n2,synch_def,synch_range);
 	synch = 0;
     len = length(n2);
 	for s=1:len
