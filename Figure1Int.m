@@ -7,9 +7,9 @@
 
 function []=jitt_demo
 
-    frate1 = 40; % neuron 1 firing in Hz
-    frate2 = 40; % neuron 2 firing in Hz
-    T = 1;  % end time in seconds
+    frate1 = 10; % neuron 1 firing in Hz
+    frate2 = 10; % neuron 2 firing in Hz
+    T = .04;  % end time in seconds
     %these variables unused in 0-lag synch def
     synch_def=.001;   % spikes x,y synchronous if |x-y|<synch_def in secs
     synch_range=[0 1]; % only count synch in this range (ie all synch spikes in neuron 1 \in synch_range)
@@ -104,7 +104,7 @@ function []=jitt_demo
         syn_surr_int = zeros(1, length(num_jitter)); 
         syn_surrb_int = zeros(1, length(num_jitter));
         n2_jitt = n2;
-        perm = zeros(1, length(n1));
+
         for k=1:num_jitter
 
             % interval jitter (interval length jitter_width*2) spikes for n1
@@ -113,7 +113,6 @@ function []=jitt_demo
             win = jitter_width*2;
             while true
                 %for i=1:length(n1)
-                %    perm(i) = datasample(jit_times, 1);
                 %end
                 %n1_jitt_int = (win)*floor(n1/(win)) + (win)*rand(1,length(n1));
                 %n1_jitt_int = round(n1_jitt_int, 3);
@@ -125,15 +124,25 @@ function []=jitt_demo
                     break
                 end
             end
+
+            %n1_jitt_int = sort(win*floor(n1/win));
+            %vals = floor(n1/win);
+            %index = 1;
+
+            %for i=0:(win/disc-1)
+            %    ct = sum(vals==i);
+            %    n1_jitt_int(index:index+ct-1) = n1_jitt_int(index:index+ct-1) + randsample(sample, ct);
+            %    index = index + ct;
+            %end
+
             %max( n1-n1_jitt )
             %display(n1_jitt_int);
-            %input('');
 
             % compute synchrony
             s = synch_compute( n1_jitt_int,n2_jitt,synch_def,synch_range );
 
             syn_surr_int(k) = s;
-            syn_surrb_int(k) = s+.5*rand(1);   % store synchrony for surrogate j
+            syn_surrb_int(k) = s + (rand(1)-.5);   % store synchrony for surrogate j
 
         end
             
@@ -181,18 +190,6 @@ end
 %hist(pval,nb), title('Raw pvals')
 %subplot(2,1,2)
 %hist(pvalr,nb), title('Randomized pvals')
-
-
-%function synch= synch_compute( n1,n2,synch_def,synch_range );
-% computes sychrony between (spike time) vectors n1 and n2  
-% sync_def is radius for def of synchrony
-% synch_range is the 
-%	synch=0;
-%	for j=1:length(n1)
-%	    if n1(j)>=synch_range(1) & n1(j)<=synch_range(2) 
-%		synch=synch+sum( n2>=n1(j)-synch_def & n2<=n1(j)+synch_def );
-%	    end
-%	end            
 
 function synch = synch_compute(n1,n2,synch_def,synch_range);
 	synch = 0;
