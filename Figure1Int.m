@@ -7,23 +7,23 @@
 
 function []=jitt_demo
 
-    frate1 = 10; % neuron 1 firing in Hz
-    frate2 = 10; % neuron 2 firing in Hz
-    T = .04;  % end time in seconds
+    frate1 = 40; % neuron 1 firing in Hz
+    frate2 = 40; % neuron 2 firing in Hz
+    T = 1;  % end time in seconds
     %these variables unused in 0-lag synch def
     synch_def=.001;   % spikes x,y synchronous if |x-y|<synch_def in secs
     synch_range=[0 1]; % only count synch in this range (ie all synch spikes in neuron 1 \in synch_range)
 
-    num_jitter = 500;
-    num_runs=5000;
-    jitter_width=0.02;
-    u=rand(num_runs,1);
+    num_jitter = 1000;
+    num_runs = 5000;
+    jitter_width = 0.02;
+    u = rand(num_runs,1);
 
 
     %%%%%%%
-    times = 0:.001:T;
     %jit_times = 0:.001:(2*jitter_width);
     disc = .001;
+    times = 0:.001:(T-disc);
 
 %    frate1 = round(frate1*T);
 %    frate2 = round(frate2*T);
@@ -61,7 +61,7 @@ function []=jitt_demo
         
         % compute initial synchrony
         orig_syn = synch_compute( n1,n2,synch_def,synch_range );
-        orig_synb = orig_syn+.5*rand(1);   % randomized synchrony
+        orig_synb = orig_syn + (rand(1)-.5);   % randomized synchrony
 
         % [basic] jitter, and tabulate synchrony counts
         % set jitter sample set
@@ -143,6 +143,7 @@ function []=jitt_demo
 
             syn_surr_int(k) = s;
             syn_surrb_int(k) = s + (rand(1)-.5);   % store synchrony for surrogate j
+            %syn_surrb_int(k) = s + .5*rand(1);   % store synchrony for surrogate j
 
         end
             
