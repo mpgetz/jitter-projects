@@ -60,7 +60,7 @@ function []=jitt_demo
 
         
         % compute initial synchrony
-        orig_syn = synch_compute( n1,n2,synch_def,synch_range );
+        orig_syn = synch_compute( n1,n2 );
         orig_synb = orig_syn + (rand(1)-.5);   % randomized synchrony
 
         % [basic] jitter, and tabulate synchrony counts
@@ -91,7 +91,7 @@ function []=jitt_demo
             %display(length(unique(n1_jitt))==length(n1));
     
             % compute synchrony
-            s=synch_compute( n1_jitt,n2_jitt,synch_def,synch_range );
+            s=synch_compute( n1_jitt,n2_jitt );
 
             syn_surr(k) = s;
             syn_surrb(k) = s+.5*rand(1);   % store synchrony for surrogate j
@@ -99,6 +99,7 @@ function []=jitt_demo
         end
 
         % [interval] jitter, and tabulate synchrony counts
+        %initialize variables for interval jitter
         sample = 0:disc:((2*jitter_width)-disc);
 
         syn_surr_int = zeros(1, length(num_jitter)); 
@@ -112,17 +113,17 @@ function []=jitt_demo
 
             win = jitter_width*2;
             while true
-                %for i=1:length(n1)
-                %end
+               %continuous case
                 %n1_jitt_int = (win)*floor(n1/(win)) + (win)*rand(1,length(n1));
                 %n1_jitt_int = round(n1_jitt_int, 3);
+               %discrete case
                 n1_jitt_int = (win)*floor(n1/(win)) + datasample(sample, length(n1));
-                %display(n1);
-                %display(n1_jitt_int);
-                %input('');
                 if length(unique(n1_jitt_int)) == length(n1)
                     break
                 end
+                %display(n1);
+                %display(n1_jitt_int);
+                %input('');
             end
 
             %n1_jitt_int = sort(win*floor(n1/win));
@@ -139,7 +140,7 @@ function []=jitt_demo
             %display(n1_jitt_int);
 
             % compute synchrony
-            s = synch_compute( n1_jitt_int,n2_jitt,synch_def,synch_range );
+            s = synch_compute( n1_jitt_int,n2_jitt);
 
             syn_surr_int(k) = s;
             syn_surrb_int(k) = s + (rand(1)-.5);   % store synchrony for surrogate j
@@ -192,7 +193,7 @@ end
 %subplot(2,1,2)
 %hist(pvalr,nb), title('Randomized pvals')
 
-function synch = synch_compute(n1,n2,synch_def,synch_range);
+function synch = synch_compute(n1,n2);
 	synch = 0;
     len = length(n2);
 	for s=1:len
