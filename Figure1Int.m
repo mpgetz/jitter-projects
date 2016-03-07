@@ -7,18 +7,18 @@
 
 function []=jitt_demo
 
-    frate1 = 40; % neuron 1 firing in Hz
-    frate2 = 40; % neuron 2 firing in Hz
+    frate1 = 100; % neuron 1 firing in Hz
+    frate2 = 100; % neuron 2 firing in Hz
     T = 1;  % end time in seconds
     %these variables unused in 0-lag synch def
-    synch_def=.001;   % spikes x,y synchronous if |x-y|<synch_def in secs
-    synch_range=[0 1]; % only count synch in this range (ie all synch spikes in neuron 1 \in synch_range)
+    %synch_def=.001;   % spikes x,y synchronous if |x-y|<synch_def in secs
+    %synch_range=[0 1]; % only count synch in this range (ie all synch spikes in neuron 1 \in synch_range)
 
-    num_jitter = 1000;
+    num_jitter = 500;
     num_runs = 5000;
     jitter_width = 0.02;
     u = rand(num_runs,1);
-
+    synchs = [];
 
     %%%%%%%
     %jit_times = 0:.001:(2*jitter_width);
@@ -62,6 +62,7 @@ function []=jitt_demo
         % compute initial synchrony
         orig_syn = synch_compute( n1,n2 );
         orig_synb = orig_syn + (rand(1)-.5);   % randomized synchrony
+        synchs(ccc) = orig_syn;
 
         % [basic] jitter, and tabulate synchrony counts
         % set jitter sample set
@@ -162,17 +163,21 @@ function []=jitt_demo
         if mod(ccc,10)==0
             orig_syn,ccc
             binw=.02;
+           
             subplot(3,2,1)
             hold off, histogram(pval,0:binw:1,'Normalization','probability'), title('Raw basic pvals'), 
             %axis([0, 1, 0, .04])
             hold on, plot(0:.01:1,binw*ones( size(0:.01:1)),'r-.')  % draw line
+           
             subplot(3,2,3)
             hold off, histogram(pvalr,0:binw:1,'Normalization','probability'), title('Randomized basic pvals')
             hold on, plot(0:.005:1,binw*ones( size(0:.005:1)),'r-.')  % draw line
+           
             subplot(3,2,2)
             hold off, histogram(pval_int,0:binw:1,'Normalization','probability'), title('Raw interval pvals')
             %axis([0, 1, 0, .04])
             hold on, plot(0:.005:1,binw*ones( size(0:.005:1)),'r-.')  % draw line
+
             subplot(3,2,4)
             hold off, histogram(pvalr_int,0:binw:1,'Normalization','probability'), title('Randomized interval pvals')
             hold on, plot(0:.005:1,binw*ones( size(0:.005:1)),'r-.')  % draw line
@@ -180,6 +185,10 @@ function []=jitt_demo
             subplot(3,2,5)
             hold off, histogram(u(1:ccc),0:binw:1,'Normalization','probability'), title('Uniform')
             hold on, plot(0:.005:1,binw*ones( size(0:.005:1)),'r-.')  % draw line
+            
+            subplot(3,2,6)
+            hold off, histogram(synchs, 0:1:40) 
+            title('Synch Distribution')
             pause(.01)
             
         end
@@ -187,11 +196,6 @@ function []=jitt_demo
     end
 end
 
-%nb=20;
-%subplot(2,1,1)
-%hist(pval,nb), title('Raw pvals')
-%subplot(2,1,2)
-%hist(pvalr,nb), title('Randomized pvals')
 
 function synch = synch_compute(n1,n2);
 	synch = 0;
