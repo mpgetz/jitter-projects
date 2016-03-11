@@ -7,8 +7,8 @@
 
 function []=jitt_demo
 
-    frate1 = 100; % neuron 1 firing in Hz
-    frate2 = 100; % neuron 2 firing in Hz
+    frate1 = 40; % neuron 1 firing in Hz
+    frate2 = 40; % neuron 2 firing in Hz
     T = 1;  % end time in seconds
     %these variables unused in 0-lag synch def
     %synch_def=.001;   % spikes x,y synchronous if |x-y|<synch_def in secs
@@ -23,7 +23,7 @@ function []=jitt_demo
     %%%%%%%
     %jit_times = 0:.001:(2*jitter_width);
     disc = .001;
-    times = 0:.001:(T-disc);
+    times = 0:disc:(T-disc);
 
 %    frate1 = round(frate1*T);
 %    frate2 = round(frate2*T);
@@ -31,9 +31,9 @@ function []=jitt_demo
     clear pval pvalr pval_int pvalr_int
     for ccc=1:num_runs
 
+        % uniform resampling sanity test
         n1 = randsample(times, frate1);
         n2 = randsample(times, frate2);
-        %orig_syn=0; 
 
         % sample Poisson by sampling exponential ISI's
         % neuron 1
@@ -162,7 +162,7 @@ function []=jitt_demo
 
         if mod(ccc,10)==0
             orig_syn,ccc
-            binw=.02;
+            binw = jitter_width;
            
             subplot(3,2,1)
             hold off, histogram(pval,0:binw:1,'Normalization','probability'), title('Raw basic pvals'), 
