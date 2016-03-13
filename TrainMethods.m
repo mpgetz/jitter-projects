@@ -1,6 +1,6 @@
 % collection of spike train analysis methods
 
-classdef st
+classdef TrainMethods
     methods
         function [] = cch(n1, n2);
         end
