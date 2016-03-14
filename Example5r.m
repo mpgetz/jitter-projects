@@ -1,7 +1,7 @@
 %%
 %Repeat Example5 situation but with Poisson train and phase matched to frate Hz sine wave
 %(+1 if [0, pi), -1 if [-pi, 2*pi)
-T = 10;%sec
+T = 100;%sec
 trials = 5000;
 num_jitter_trials = 500;
 ups1 = zeros(1,trials);
@@ -16,7 +16,8 @@ win = 0.005; %1/2 jitter window width
 bins = (0+win):.001:(1-win); 
 
 % neuron data
-frate = 10;
+%frate = 5;
+m = 40;
 
 % phase data
 freq = 120; 
@@ -34,7 +35,6 @@ for runs=1:trials
     %}
 
     %choose exactly m spikes from msec bins:
-    m = 10;
     n1 = randsample(bins, m);
 
     dur1 = length(n1);
@@ -65,6 +65,8 @@ end
 %probstu(1,runs) = sum((pref/dur1)==1);
 %probstd(1,runs) = sum((pref/dur1)==0);
 %probs1(1,runs) = sum((prefs./lengths)==1)/trials;
-alpha = 0.05;
+alpha = 0.03;
 pdist = (ups1<=alpha);
 k = (sum(pdist)/length(ups1))/alpha;
+pDdist = (dns1<=alpha);
+kD = (sum(pDdist)/length(dns1))/alpha;

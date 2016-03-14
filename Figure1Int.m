@@ -7,9 +7,9 @@
 
 function []=jitt_demo
 
-    frate1 = 2; % neuron 1 firing in Hz
-    frate2 = 2; % neuron 2 firing in Hz
-    T = 1;  % end time in seconds
+    frate1 = 10; % neuron 1 firing in Hz
+    frate2 = 10; % neuron 2 firing in Hz
+    T = .4;  % end time in seconds
     %these variables unused in 0-lag synch def
     %synch_def=.001;   % spikes x,y synchronous if |x-y|<synch_def in secs
     %synch_range=[0 1]; % only count synch in this range (ie all synch spikes in neuron 1 \in synch_range)
@@ -35,19 +35,30 @@ function []=jitt_demo
         %n1 = randsample(times, frate1);
         %n2 = randsample(times, frate2);
 
+        %while true
+        %    n1 = randsample(times, frate1);
+        %    n2 = randsample(times, frate2);
+        %    if max(max(histcounts(n1, 25), histcounts(n2, 25))) == 1
+        %        break
+        %    end
+        %end
+
       % spike per bin
         sample = 0:disc:((2*jitter_width)-disc);
         num_wins = T/(2*jitter_width);
-        n1 = zeros(1, num_wins);
-        n2 = zeros(1, num_wins);
+        spikes = 1;
+        n1 = zeros(spikes, num_wins);
+        n2 = zeros(spikes, num_wins);
 
         for i=1:num_wins
-            n1(i) = (i-1)*(2*jitter_width) + randsample(sample, 1);
-            n2(i) = (i-1)*(2*jitter_width) + randsample(sample, 1);
+            n1(:, i) = ((i-1)*(2*jitter_width) + randsample(sample, spikes))';
+            n2(:, i) = ((i-1)*(2*jitter_width) + randsample(sample, spikes))';
         end
+        n1 = reshape(n1, [1, spikes*num_wins]);
+        n2 = reshape(n2, [1, spikes*num_wins]);
 
       % sample Poisson by sampling exponential ISI's
-        % neuron 1
+        %% neuron 1
         %n1 = (rand(1, length(times)) <= disc*frate1);
         %n1 = find(n1).*disc;
 
@@ -56,13 +67,14 @@ function []=jitt_demo
         %n1 = unique(n1(n1<=(1-jitter_width)));
         %n1 = unique(round(n1(1:end-1), 3));
 
-        % neuron 2
+        %% neuron 2
         %n2 = (rand(1, length(times)) <= disc*frate1);
         %n2 = find(n2).*disc;
 
         %n2 = n2(n2<=(T-(2*jitter_width)));
         %n2 = n2((2*jitter_width)<=n2);
         %n2 = unique(round(n2(1:end-1), 3));
+        
         %display(n1);
         %display(n2);
         %input('');
@@ -168,6 +180,28 @@ function []=jitt_demo
         % pval for randomized interval jitter test
         pvalr_int(ccc)=(1+sum( syn_surrb_int>=orig_synb))/(num_jitter+1);
 
+        %if pvalr_int(ccc) >= .75
+        %    display(orig_syn)
+        %    display(orig_synb)
+        %    display(n1);
+        %    display(n2);
+        %    display(histcounts(sort(n1), 25));
+        %    display(histcounts(sort(n2), 25));
+        %    input('');
+        %end
+
+        %display(max(max(histcounts(n1, 25), histcounts(n2, 25))));
+        %pause(.01)
+
+        %if max(max(histcounts(n1, 25), histcounts(n2, 25))) >= 6
+        %    display(orig_syn)
+        %    display(orig_synb)
+        %    display(n1);
+        %    display(n2);
+        %    display(histcounts(sort(n1), 25));
+        %    display(histcounts(sort(n2), 25));
+        %    input('');
+        %end
 
         if mod(ccc,10)==0
             orig_syn,ccc
