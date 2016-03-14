@@ -7,8 +7,8 @@
 
 function []=jitt_demo
 
-    frate1 = 40; % neuron 1 firing in Hz
-    frate2 = 40; % neuron 2 firing in Hz
+    frate1 = 2; % neuron 1 firing in Hz
+    frate2 = 2; % neuron 2 firing in Hz
     T = 1;  % end time in seconds
     %these variables unused in 0-lag synch def
     %synch_def=.001;   % spikes x,y synchronous if |x-y|<synch_def in secs
@@ -31,16 +31,25 @@ function []=jitt_demo
     clear pval pvalr pval_int pvalr_int
     for ccc=1:num_runs
 
-        % uniform resampling sanity test
-        n1 = randsample(times, frate1);
-        n2 = randsample(times, frate2);
+      % uniform resampling sanity test
+        %n1 = randsample(times, frate1);
+        %n2 = randsample(times, frate2);
 
-        % sample Poisson by sampling exponential ISI's
+      % spike per bin
+        sample = 0:disc:((2*jitter_width)-disc);
+        num_wins = T/(2*jitter_width);
+        n1 = zeros(1, num_wins);
+        n2 = zeros(1, num_wins);
+
+        for i=1:num_wins
+            n1(i) = (i-1)*(2*jitter_width) + randsample(sample, 1);
+            n2(i) = (i-1)*(2*jitter_width) + randsample(sample, 1);
+        end
+
+      % sample Poisson by sampling exponential ISI's
         % neuron 1
         %n1 = (rand(1, length(times)) <= disc*frate1);
         %n1 = find(n1).*disc;
-        %display(n1);
-        %input('');
 
         %n1 = n1(n1<=(T-(2*jitter_width)));
         %n1 = n1((2*jitter_width)<=n1);
