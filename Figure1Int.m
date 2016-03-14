@@ -14,7 +14,7 @@ function []=jitt_demo
     %synch_def=.001;   % spikes x,y synchronous if |x-y|<synch_def in secs
     %synch_range=[0 1]; % only count synch in this range (ie all synch spikes in neuron 1 \in synch_range)
 
-    num_jitter = 500;
+    num_jitter = 1000;
     num_runs = 5000;
     jitter_width = 0.02;
     u = rand(num_runs,1);

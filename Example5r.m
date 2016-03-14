@@ -1,7 +1,7 @@
 %%
 %Repeat Example5 situation but with Poisson train and phase matched to frate Hz sine wave
 %(+1 if [0, pi), -1 if [-pi, 2*pi)
-T = 1;%sec
+T = 10;%sec
 trials = 5000;
 num_jitter_trials = 500;
 ups1 = zeros(1,trials);
@@ -11,8 +11,15 @@ lengths = zeros(1, trials);
 probs1 = zeros(1, trials);
 probstu = zeros(1, trials);
 probstd = zeros(1, trials);
-frate = 10;
+
 win = 0.005; %1/2 jitter window width
+bins = (0+win):.001:(1-win); 
+
+% neuron data
+frate = 10;
+
+% phase data
+freq = 120; 
 
 %how to compute a numerical alpha?
 for runs=1:trials
@@ -27,13 +34,11 @@ for runs=1:trials
     %}
 
     %choose exactly m spikes from msec bins:
-    bins = (0+win):.001:(1-win); %this is computationally wasteful in the loop
     m = 10;
     n1 = randsample(bins, m);
 
     dur1 = length(n1);
     lengths(1,runs) = dur1;
-    freq = 120; %sin wave freq in Hz
 
     pref = rphase_stat(n1, freq);
     prefs(1,runs) = pref;
@@ -62,4 +67,4 @@ end
 %probs1(1,runs) = sum((prefs./lengths)==1)/trials;
 alpha = 0.05;
 pdist = (ups1<=alpha);
-k = alpha/(sum(pdist)/length(ups1));
+k = (sum(pdist)/length(ups1))/alpha;
