@@ -2,17 +2,19 @@
 
 classdef TrainMethods
     methods
-        function [] = cch(self, n1, n2, disc, maxlag);
+        function [counts] = cch(self, n1, n2, disc, maxlag);
         % creates CCH for spike trains n1, n2
             counts = zeros(1, (2*maxlag)/disc);
             lags = -maxlag:disc:maxlag;
 
             for lag=1:length(lags)
-                counts(lag) = sum((n1+lag)==n2);
+                for s=1:length(n2)
+                    counts(lag) = sum((n1+lag)==n2(s));
+                end
             end
 
             % plot counts
-            histogram(counts, [-maxlag, maxlag]);
+            bar([-maxlag:disc:maxlag], counts);
         end
 
         function [] = raster(varargin)
