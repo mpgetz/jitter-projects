@@ -30,6 +30,7 @@ function []=jitt_demo
     
     clear pval pvalr pval_int pvalr_int
     for ccc=1:num_runs
+        %T = randsample([.4, .8, 1], 1);
 
       % uniform resampling sanity test
         %n1 = randsample(times, frate1);
@@ -46,7 +47,8 @@ function []=jitt_demo
       % spike per bin
         sample = 0:disc:((2*jitter_width)-disc);
         num_wins = T/(2*jitter_width);
-        spikes = 1;
+        spikes = randsample([1, 2, 3, 4], 1);
+        %spike = 1;
         n1 = zeros(spikes, num_wins);
         n2 = zeros(spikes, num_wins);
 
