@@ -9,7 +9,7 @@ function []=jitt_demo
 frate1=20; % neuron 1 firing in Hz
 frate2=20; % neuron 2 firing in Hz
 T=1;  % end time in seconds
-synch_def=.01;   % spikes x,y synchronous if |x-y|<synch_def in secs
+synch_def=.002; % spikes x,y synchronous if |x-y|<synch_def in secs
 synch_range=[0 1]; % only count synch in this range (ie all synch spikes in neuron 1 \in synch_range)
 
 num_jitter=500;
@@ -24,15 +24,20 @@ clear pval pvalr pval_int pvalr_int
 for ccc=1:num_runs
 
    orig_syn=0; 
-    
    discrete = 0.001;
-   times = 0:discrete:(T-discrete);
-   l = length(times);
-   n1 = rand(1, l);
-   n1 = find(n1 <= (frate1/l))*discrete;
 
-   n2 = rand(1, l);
-   n2 = find(n2 <= (frate2/l))*discrete;
+  % Conditionally uniform
+   times = 0:discrete:(T-discrete);
+   n1 = randsample(times, frate1);
+   n2 = randsample(times, frate2);
+    
+  % Discrete Poisson case
+%   l = length(times);
+%   n1 = rand(1, l);
+%   n1 = find(n1 <= (frate1/l))*discrete;
+%
+%   n2 = rand(1, l);
+%   n2 = find(n2 <= (frate2/l))*discrete;
 %   display(n1)
 %   display(n2)
 %   input('');
@@ -74,10 +79,22 @@ for ccc=1:num_runs
         syn_surr_int=[]; syn_surrb_int=[];
         for k=1:num_jitter
 
+            % interval jitter for discrete case
+            sample = 0:discrete:((2*jitter_width)-discrete);
+
+            while true
+                n1_jitt_int = (jitter_width*2)*floor(n1/(jitter_width*2)) + datasample(sample, length(n1));
+                if length(unique(n1_jitt_int)) == length(n1)
+                    break
+                end
+            end
+
             % interval jitter (interval length jitter_width*2) spikes for n1
-            n1_jitt_int=(jitter_width*2)*floor( n1/(jitter_width*2) ) + (jitter_width*2)*rand( 1,length(n1) );
+            %n1_jitt_int = (jitter_width*2)*floor(n1/(jitter_width*2)) + (jitter_width*2)*rand(1,length(n1));
             %max( n1-n1_jitt )
-            n2_jitt=n2;
+
+            % fix n2
+            n2_jitt = n2;
             
             % compute synchrony
             s=synch_compute( n1_jitt_int,n2_jitt,synch_def,synch_range );

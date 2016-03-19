@@ -7,10 +7,15 @@ classdef TrainMethods
             counts = zeros(1, (2*maxlag)/disc);
             lags = -maxlag:disc:maxlag;
 
-            for lag=1:length(lags)
+            %n1 = round(n1, 3);
+            %n2 = round(n2, 3);
+            for l=1:length(lags)
+                lag = lags(l);
+                count = 0;
                 for s=1:length(n2)
-                    counts(lag) = sum((n1+lag)==n2(s));
+                    count = count + sum((n1+lag)==n2(s));
                 end
+                counts(l) = count;
             end
 
             % plot counts
@@ -27,11 +32,24 @@ classdef TrainMethods
             ylim([0 l]);
             for n=1:l
                 arg = args{n};
-                for i=1:length(arg)
+                l_a = length(arg);
+
+                % truncate to a(n arbitrarily) manageable size
+                if l_a > 500
+                    arg = arg(0:500);
+                end
+
+                for i=1:l_a
                     line([arg(i) arg(i)], [n-1, n]);
                 end
             end
             hold off
+        end
+
+        % Kamran dataset specific
+        function [train] = get_spikes(self, times, cluster_set, label)
+            train = find(cluster_set == label);
+            train = times(train);
         end
     end
 end
