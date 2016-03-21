@@ -19,6 +19,8 @@ classdef TrainMethods
                     count = count + length(intersect(find((n1+lower)<=n2(s)), find((n2(s)<(n1+upper)))));
                 end
                 counts(l) = count;
+
+                display(l);
             end
 
             % plot counts
@@ -52,9 +54,12 @@ classdef TrainMethods
         end
 
         % Kamran dataset specific
-        function [train] = get_spikes(self, times, cluster_set, label)
+        function [train, train_units] = get_spikes(self, times, cluster_set, label)
+        % picks out assigned spikes from first dataset. 
+        % first output in units=sessions; second output in units=sec
             train = find(cluster_set == label);
             train = times(train);
+            train_units = train/32552;
         end
     end
 end
