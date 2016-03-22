@@ -4,6 +4,8 @@ classdef TrainMethods
     methods
         function [counts] = cch(self, n1, n2, bin, lag, maxlag);
         % creates CCH for spike trains n1, n2
+        % lag, maxlag, expect integers
+        % produces response of n2 wrt n1
             counts = zeros(1, (2*maxlag)/lag);
             lags = -maxlag:lag:maxlag;
 
