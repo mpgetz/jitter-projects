@@ -2,9 +2,9 @@
 % Repeat Example5 situation but with Poisson train and phase matched to frate Hz sine wave
 % (+1 if [0, pi), -1 if [-pi, 2*pi)
 % msec discretization
-T = 100;%sec
-trials = 5000;
-num_jitter_trials = 500;
+T = 1000;%sec
+trials = 10000;
+num_jitter_trials = 10000;
 ups1 = zeros(1,trials);
 dns1 = zeros(1,trials);
 prefs = zeros(1, trials);
@@ -19,7 +19,7 @@ interval = 0:.001:(2*win)-.001;
 
 % neuron data
 %frate = 5;
-m = 10;
+m = 20;
 
 % phase data
 freq = 120; 
@@ -44,6 +44,7 @@ for runs=1:trials
 %    display(pref);
     jit_stats1 = zeros(1,num_jitter_trials);
 
+    % perform basic jitter
     for t=1:num_jitter_trials
         jit = n1 + ((datasample(interval ,dur1))-win);
 
@@ -53,8 +54,8 @@ for runs=1:trials
     end
     
     %calculate p-value
-    up1 = (1+sum(pref>=jit_stats1))/(1+num_jitter_trials);
-    dn1 = (1+sum(pref<=jit_stats1))/(1+num_jitter_trials);
+    up1 = (1+sum(jit_stats1>=pref))/(1+num_jitter_trials);
+    dn1 = (1+sum(pref>=jit_stats1))/(1+num_jitter_trials);
     %display(up);
     %display(dn);
     ups1(1,runs) = up1;
@@ -62,6 +63,7 @@ for runs=1:trials
 
     if mod(runs, 100) == 0
         display(runs);
+        display(pref);
     end
 
 end
@@ -70,7 +72,7 @@ end
 %probstu(1,runs) = sum((pref/dur1)==1);
 %probstd(1,runs) = sum((pref/dur1)==0);
 %probs1(1,runs) = sum((prefs./lengths)==1)/trials;
-alpha = 0.03;
+alpha = 0.0001;
 pdist = (ups1<=alpha);
 k = (sum(pdist)/length(ups1))/alpha;
 pDdist = (dns1<=alpha);
