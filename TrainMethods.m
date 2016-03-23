@@ -5,7 +5,7 @@ classdef TrainMethods
         function [counts] = cch(self, n1, n2, bin, lag, maxlag);
         % creates CCH for spike trains n1, n2
         % lag, maxlag, expect integers
-        % produces response of n2 wrt n1
+        % produces response with n1 reference, n2 target
             counts = zeros(1, (2*maxlag)/lag);
             lags = -maxlag:lag:maxlag;
 
@@ -17,8 +17,8 @@ classdef TrainMethods
                 lower = (lag-0.5)*bin;
                 upper = (lag+0.5)*bin;
 
-                for s=1:length(n2)
-                    count = count + length(intersect(find((n1+lower)<=n2(s)), find((n2(s)<(n1+upper)))));
+                for s=1:length(n1)
+                    count = count + length(intersect(find((n2-lower)>=n1(s)), find(n1(s)>(n2-upper))));
                 end
                 counts(l) = count;
 
@@ -28,6 +28,22 @@ classdef TrainMethods
             % plot counts
             bar(lags, counts);
             xlim([-maxlag-0.5, maxlag+0.5]);
+        end
+
+        %DO NOT CALL
+        function [] = cch_series(self, trains)
+        % creates set of cchs for all pairs in trains
+        % trains is a cell containing spike data to be analyzed
+        % 1msec bin window, 10msec analysis, input units in sec
+            figure
+            k = 1;
+            for i=1:(length(trains)-1)
+                for j=(i+1):length(trains)
+                    subplot(2, 5, (k))
+                    self.cch(trains{i}, trains{j}, .001, 1, 10);
+                    k = k + 1;
+                end
+            end
         end
 
         function [] = raster(varargin)
