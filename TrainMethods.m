@@ -59,10 +59,10 @@ classdef TrainMethods
                 l_a = length(arg);
 
                 % truncate to a(n arbitrarily) manageable size
-                if l_a > 500
-                    arg = arg(1:500);
-                    l_a = 500;
-                end
+                %if l_a > 500
+                %    arg = arg(1:500);
+                %    l_a = 500;
+                %end
 
                 for i=1:l_a
                     line([arg(i) arg(i)], [n-1, n]);
@@ -71,13 +71,21 @@ classdef TrainMethods
             hold off
         end
 
-        % Kamran dataset specific
+       % Kamran dataset specific
         function [train, train_units] = get_spikes(self, times, cluster_set, label)
         % picks out assigned spikes from first dataset. 
         % first output in units=sessions; second output in units=sec
             train = find(cluster_set == label);
             train = times(train);
             train_units = train/32552;
+        end
+
+        function [cell] = get_trains(self, times, cluster_set, array)
+        % collects all desired spike trains from input array of spike labels, in this case, spike var
+            for i=1:length(array)
+                [n, nt] = self.get_spikes(times, cluster_set, array(i));
+                cell{i} = nt;
+            end
         end
     end
 end
