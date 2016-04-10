@@ -80,6 +80,19 @@ classdef TrainMethods
             train_units = train/32552;
         end
 
+        %% UPDATED TO SPECIFY SHANK
+        % assumes that s.shank and s.cluster uniquely specify neuron
+        function [trains, trains_units] = get_spike_set(self, times, shanks, cluster_set, label)
+        % here, times=spike.t, shanks=spike.shank, cluster_set=spike.cluster, label is the cluster label of interest
+        % first output in units=sessions; second output in units=sec
+            cluster = find(cluster_set == label);
+            ind = unique(shanks(cluster));
+            for i=1:length(ind)
+                trains{i} = intersect(cluster, find(shanks==ind(i)));
+                trains_units{i} = times(trains{i})/32552;
+            end
+        end
+
         function [cell] = get_trains(self, times, cluster_set, array)
         % collects all desired spike trains from input array of spike labels, in this case, spike var
             for i=1:length(array)
