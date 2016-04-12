@@ -2,23 +2,30 @@
 % Largely used as a record of command-line work
 %tm = TrainMethods;
 
-% extract msec synch spikes from refcell wrt tcell
-refcell = cell1{2};
-tcell = cell2{3};
-synch = zeros(1, length(refcell));
-n = zeros(1, length(refcell));
-
-for i=1:length(refcell)
-    if ~isempty(find(refcell(i)+.00015>=tcell & tcell>=refcell(i)))
-        synch(i) = refcell(i);
-        n(i) = 1;
-    end
-end
-
-% remove hanging zeros
-synchp = find(synch);
-synch = synch(synchp);
-n = find(n);
+%% extract msec synch spikes from refcell wrt tcell
+%refcell = cell1{2};
+%tcell = cell2{3};
+%synch = zeros(1, length(refcell));
+%n = zeros(1, length(refcell));
+%
+%for i=1:length(refcell)
+%    if ~isempty(find(refcell(i)+.00015>=tcell & tcell>=refcell(i)))
+%        synch(i) = refcell(i);
+%        n(i) = 1;
+%    end
+%end
+%
+%% remove hanging zeros
+%synchp = find(synch);
+%synch = synch(synchp);
+%n = find(n);
+%
+%% the code below plots the spikes assigned to n on a map of the position
+%x = spike.x(n);
+%
+%figure
+%plot(spike.x, spike.y);
+%line([x, x], [.2, .25], 'Color', 'r');
 
 % plot group of msec cchs given by column pairs in var objs
 %objs = [1, 2; 1, 3; 2, 3];
@@ -54,9 +61,27 @@ n = find(n);
 %    angles8(elem) = theta;
 %end
 
-% the code below plots the spikes assigned to n on a map of the position
-x = spike.x(n);
+%%t = all interneurons
+%%train_labels = label for interneurons
+%tf = []; 
+%% returns position of interneuron spikes wrt entire train
+%for i=1:13 
+%    tf = [tf, find(spike.cluster==train_labels(i))']; 
+%end
+%tf = sort(tf);
+%t = spike.t(tf)/32552;
 
-figure
-plot(spike.x, spike.y);
-line([x, x], [.2, .25], 'Color', 'r');
+t_s = spike.t/32552;
+trate = zeros(size(spike.t));
+i = 0;
+bin = .01;
+while i<=max(t_s)
+    k = histcounts(t_s, [i, i+bin])/bin;
+    trate(find(t_s >= i & t_s < i+bin)) = k;
+    i = i + bin;
+end
+
+avg = (length(t)/range(t));
+%visualize rates
+%plot(r); hold on;
+%plot(0:10:length(r), avg*ones(size(0:10:length(r))),'r-.');
