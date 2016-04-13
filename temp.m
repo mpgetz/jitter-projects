@@ -6,23 +6,28 @@
 %refcell = cell1{2};
 %tcell = cell2{3};
 %synch = zeros(1, length(refcell));
-%n = zeros(1, length(refcell));
 %
 %for i=1:length(refcell)
 %    if ~isempty(find(refcell(i)+.00015>=tcell & tcell>=refcell(i)))
 %        synch(i) = refcell(i);
-%        n(i) = 1;
 %    end
 %end
 %
 %% remove hanging zeros
 %synchp = find(synch);
 %synch = synch(synchp);
+
+% computes position of synch from above relative to entire time series
+%n = zeros(1, length(spike.t));
+%for i=1:length(synch); 
+%    k = find((spike.t/32552)==synch(i)); 
+%    n(k(1)) = synch(i); 
+%end;
 %n = find(n);
-%
+
 %% the code below plots the spikes assigned to n on a map of the position
 %x = spike.x(n);
-%
+
 %figure
 %plot(spike.x, spike.y);
 %line([x, x], [.2, .25], 'Color', 'r');
@@ -52,14 +57,14 @@
 %end
 
 % compute direction of movement wrt x-axis
-%angles8 = zeros(1, length(c8p));
-%for elem=1:length(c8p)
-%    s = c8p(elem);
-%    x8 = spike.x(s+1)-spike.x(s-1);
-%    y8 = spike.y(s+1)-spike.y(s-1);
-%    [theta, rho] = cart2pol(x8, y8);
-%    angles8(elem) = theta;
-%end
+angles8 = zeros(1, length(n));
+for elem=1:length(n)
+    s = n(elem);
+    x8 = spike.x(s+1)-spike.x(s-1);
+    y8 = spike.y(s+1)-spike.y(s-1);
+    [theta, rho] = cart2pol(x8, y8);
+    angles8(elem) = theta;
+end
 
 %%t = all interneurons
 %%train_labels = label for interneurons
@@ -71,17 +76,18 @@
 %tf = sort(tf);
 %t = spike.t(tf)/32552;
 
-t_s = spike.t/32552;
-trate = zeros(size(spike.t));
-i = 0;
-bin = .01;
-while i<=max(t_s)
-    k = histcounts(t_s, [i, i+bin])/bin;
-    trate(find(t_s >= i & t_s < i+bin)) = k;
-    i = i + bin;
-end
+%t_s = spike.t/32552;
+%trate = zeros(size(spike.t));
+%i = 0;
+%bin = .01;
+%
+%while i<=max(t_s)
+%    k = histcounts(t_s, [i, i+bin])/bin;
+%    trate(find(t_s >= i & t_s < i+bin)) = k;
+%    i = i + bin;
+%end
 
-avg = (length(t)/range(t));
+%avg = (length(t)/range(t));
 %visualize rates
 %plot(r); hold on;
 %plot(0:10:length(r), avg*ones(size(0:10:length(r))),'r-.');
