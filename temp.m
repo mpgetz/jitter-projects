@@ -3,27 +3,39 @@
 %tm = TrainMethods;
 
 %% extract msec synch spikes from refcell wrt tcell
-%refcell = cell1{2};
-%tcell = cell2{3};
+%refcell = cell1{3};
+%tcell = cell2{1};
 %synch = zeros(1, length(refcell));
 %
 %for i=1:length(refcell)
-%    if ~isempty(find(refcell(i)+.00015>=tcell & tcell>=refcell(i)))
+%    if ~isempty(find(refcell(i)>=tcell & tcell>=refcell(i)-.00015))
+%    %if ~isempty(find(refcell(i)+.00015>=tcell & tcell>=refcell(i)))
 %        synch(i) = refcell(i);
 %    end
 %end
 %
-%% remove hanging zeros
+% remove hanging zeros
 %synchp = find(synch);
 %synch = synch(synchp);
 
-% computes position of synch from above relative to entire time series
-%n = zeros(1, length(spike.t));
-%for i=1:length(synch); 
-%    k = find((spike.t/32552)==synch(i)); 
-%    n(k(1)) = synch(i); 
+% compared synchronous events for two different neuron pairs
+%%count = 0; 
+%l1 = []; l2 = [];
+%for i=1:649; 
+%    %count = count + sum(abs(synch-synch811(i))<1); 
+%    if sum(abs(synch-synch811(i))<1) > 0
+%        l1 = [l1, synch(find(abs(synch-synch811(i))<1))];
+%        l2 = [l2, synch811(i)];
+%    end 
 %end;
-%n = find(n);
+
+% computes position of synch from above relative to entire time series
+n = zeros(1, length(spike.t));
+for i=1:length(synch); 
+    k = find((spike.t/32552)==synch(i)); 
+    n(k(1)) = synch(i); 
+end;
+n = find(n);
 
 %% the code below plots the spikes assigned to n on a map of the position
 %x = spike.x(n);
@@ -33,11 +45,11 @@
 %line([x, x], [.2, .25], 'Color', 'r');
 
 % plot group of msec cchs given by column pairs in var objs
-%objs = [1, 2; 1, 3; 2, 3];
-%for j=1:3
-%    subplot(1, 3, (j))
+%objs = [3, 1];
+%for j=1:1
+%    subplot(1, 1, (j))
 %    tm.cch(cell1{objs(j, 1)}, cell2{objs(j, 2)}, .00003, 1, 20);
-%    title(strcat('n8 shank', int2str(ns1(objs(j, 1))), '-->', 'n11 shank', int2str(ns2(objs(j, 2)))));
+%    title(strcat('n11 shank', int2str(ns1(objs(j, 1))), '-->', 'n34 shank', int2str(ns2(objs(j, 2)))));
 %    xlabel('.03ms bin');
 %end
 
@@ -46,11 +58,11 @@
 %k = 1;
 %for i=1:4
 %%for i=1:(length(cell)-1)
-%    for j=1:4
+%    for j=1:1
 %    %for j=(i+1):length(cell)
-%        subplot(4, 4, (k))
+%        subplot(1, 4, (k))
 %        tm.cch(cell1{i}, cell2{j}, .001, 1, 10);
-%        title(strcat('n8 shank', int2str(ns1(i)), '-->', 'n11 shank', int2str(ns2(j))));
+%        title(strcat('n11 shank', int2str(ns1(i)), '-->', 'n34 shank', int2str(ns2(j))));
 %        k = k+1;
 %        i,j
 %    end
