@@ -1,4 +1,5 @@
 %Specific to analysis of Diba data
+%some code below modified from: http://fmatoolbox.sourceforge.net/
 
 classdef IO_data
     properties
@@ -7,12 +8,13 @@ classdef IO_data
             electrodes = 8;
             samples = 54;
             rate = 32552;
+            path = '~/Diba-data/';
     end
 
     methods
         %import clu file and strip off first elem. 
         function [clu] = clu_in(self, electrodeGroup)
-            filename = ['Kamran Diba - 2006-6-09_22-24-40.clu.' electrodeGroup];
+            filename = [self.path 'Kamran Diba - 2006-6-09_22-24-40.clu.' electrodeGroup];
             clu = load(filename);
             f_e = clu(1);
             clu = clu(2:end);
@@ -59,6 +61,22 @@ classdef IO_data
             end
         end
 
+        %Lazy read functions for segmenting
+        function [] = read_clu()
+        end
+
+        function [nFeature, fet] = read_fet(self, electrodeGroup)
+            filename = [self.path 'Kamran Diba - 2006-6-09_22-24-40.fet.' electrodeGroup];
+            file = fopen(filename,'r');
+            if file == -1,
+                error(['Cannot open file ''' filename '''.']);
+            end
+            nFeatures = fscanf(file,'%d',1);
+            fet = fscanf(file,'%d',[nFeatures,inf])';
+            fclose(file);
+        end
+ 
+%Ignore for now.
         function [] = write_clu(self, clu_var)
             %clu_data
             %append 'Kamran Diba - 2006-6-09_22-24-40.'
@@ -68,7 +86,8 @@ classdef IO_data
         end
 
         function [] = write_fet(self, fet_var)
-               
+            [nFeatures, fet] = self.read_fet(fet_var);
+            fet_w = fet*spike_set;
         end
 
         function [] = write_spk(self, spk_var)
