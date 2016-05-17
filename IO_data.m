@@ -8,7 +8,7 @@ classdef IO_data
             electrodes = 8;
             samples = 54;
             rate = 32552;
-            path = '~/Diba-data/';
+            path = '~/Documents/Diba-data/';
     end
 
     methods
@@ -22,14 +22,15 @@ classdef IO_data
 
         %pair with res file (spike times)
 
-        function [forms] = spk_in(self, path_to_file)
-            file = fopen(path_to_file);
+        function [forms] = spk_in(self, electrodeGroup)
+            filename = [self.path 'Kamran Diba - 2006-6-09_22-24-40.spk.' electrodeGroup];
+            file = fopen(filename);
             wvfm = fread(file, 'int16');
                 %best to reshape into a 3D matrix
                 %dims: electrode:sample:spike
 
-            spikes = length(clu_data);
-            forms = reshape(wvfm, electrodes, samples, [])
+            %spikes = length(clu_data);
+            forms = reshape(wvfm, self.electrodes, self.samples, []);
         end
 
         function [features] = fet_in(self, electrodeGroup) %electrodeGroup corresponds to shank number
