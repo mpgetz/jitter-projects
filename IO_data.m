@@ -52,16 +52,6 @@ classdef IO_data
             features = [fet(:,end)/self.rate electrodeGroup*ones(size(clu)) clu fet(:,1:end-1)];
         end
 
-        %clean up to dynamically adjust; or set ylim to max/min amp of recording
-        function [] = plot_wv(self, array)
-            electrodes = 8;
-            for i=1:electrodes
-                subplot(electrodes, 1, i);
-                plot(array(i, :));
-                ylim([min(min(min(array))), max(max(max(array)))]);
-            end
-        end
-
         %Lazy read functions for segmenting
         function [] = read_clu()
         end
@@ -102,7 +92,25 @@ classdef IO_data
             self.write_spk(spk_file)
         end
 
+    %Data manipulation functions    
+        %assume vector of synchronous spike times, v
+        v = zeros(1, 649);
+        for i=1:649; 
+            p(i) = find(fet(:,1)==synch811(i)); 
+        end
+
+        %Moved to new file
+        %clean up to dynamically adjust; or set ylim to max/min amp of recording
+        function [] = plot_wv(self, array)
+            electrodes = 8;
+            for i=1:electrodes
+                subplot(electrodes, 1, i);
+                plot(array(i, :));
+                ylim([min(min(min(array))), max(max(max(array)))]);
+            end
+        end
     end
+
 end
 
 %{
