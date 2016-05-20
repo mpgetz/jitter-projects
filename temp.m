@@ -2,6 +2,48 @@
 % Largely used as a record of command-line work
 %tm = TrainMethods;
 
+%plots 9-sample intervals of second channel
+figure;
+p2 = randsample(1:522497, 649);
+for i=1:6
+    subplot(2, 6, i)
+    hold on
+    for j=1:length(p2)
+        plot(wv_4(1, ((i-1)*9)+1:i*9, p4(j)));
+    end
+    ylim([-1000, 1000]);
+    hold off
+
+    subplot(2, 6, i+6)
+    hold on
+    for j=1:length(p2)
+        plot(wv_4(1, ((i-1)*9)+1:i*9, p2(j)));
+    end
+    ylim([-1000, 1000]);
+    hold off
+end
+
+%plots 6-sample intervals of second channel
+figure;
+for i=1:9
+    subplot(2, 9, i)
+    hold on
+    for j=1:length(p2)
+        plot(wv_4(2, ((i-1)*6)+1:i*6, p4(j)));
+    end
+    ylim([-1000, 1000]);
+    hold off
+
+    subplot(2, 9, i+9)
+    hold on
+    for j=1:length(p2)
+        plot(wv_4(2, ((i-1)*6)+1:i*6, p2(j)));
+    end
+    ylim([-1000, 1000]);
+    hold off
+end
+
+
 %% extract msec synch spikes from refcell wrt tcell
 %refcell = cell1{3};
 %tcell = cell2{1};
@@ -30,12 +72,12 @@
 %end;
 
 % computes position of synch from above relative to entire time series
-n = zeros(1, length(spike.t));
-for i=1:length(synch); 
-    k = find((spike.t/32552)==synch(i)); 
-    n(k(1)) = synch(i); 
-end;
-n = find(n);
+%n = zeros(1, length(spike.t));
+%for i=1:length(synch); 
+%    k = find((spike.t/32552)==synch(i)); 
+%    n(k(1)) = synch(i); 
+%end;
+%n = find(n);
 
 %% the code below plots the spikes assigned to n on a map of the position
 %x = spike.x(n);
@@ -68,15 +110,15 @@ n = find(n);
 %    end
 %end
 
-% compute direction of movement wrt x-axis
-angles8 = zeros(1, length(n));
-for elem=1:length(n)
-    s = n(elem);
-    x8 = spike.x(s+1)-spike.x(s-1);
-    y8 = spike.y(s+1)-spike.y(s-1);
-    [theta, rho] = cart2pol(x8, y8);
-    angles8(elem) = theta;
-end
+%% compute direction of movement wrt x-axis
+%angles8 = zeros(1, length(n));
+%for elem=1:length(n)
+%    s = n(elem);
+%    x8 = spike.x(s+1)-spike.x(s-1);
+%    y8 = spike.y(s+1)-spike.y(s-1);
+%    [theta, rho] = cart2pol(x8, y8);
+%    angles8(elem) = theta;
+%end
 
 %%t = all interneurons
 %%train_labels = label for interneurons
