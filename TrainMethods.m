@@ -71,6 +71,20 @@ classdef TrainMethods
             hold off
         end
 
+        function [synch] = find_synch(self, n1, n2, lbd, ubd)
+        %picks out spikes with synch g/eq lbd and l/eq ubd
+        %need a notion of direction (n1-->n2)
+        %vectorize this?
+            synch = zeros(1, length(n1));
+            for i=1:length(n1)
+                times = n2-n1(i);
+                if ~isempty(find(lbd<=times & times<=ubd));
+                    synch(i) = n1(i);
+                end
+            end
+            synch = synch(find(synch)); 
+        end
+
        % Kamran dataset specific
         function [train, train_units] = get_spikes(self, times, cluster_set, label)
         % picks out assigned spikes from first dataset. 
@@ -85,6 +99,8 @@ classdef TrainMethods
         function [trains, trains_units] = get_spike_set(self, times, shanks, cluster_set, label)
         % here, times=spike.t, shanks=spike.shank, cluster_set=spike.cluster, label is the cluster label of interest
         % first output in units=sessions; second output in units=sec
+            trains = {};
+            trains_units = {};
             cluster = find(cluster_set == label);
             ind = unique(shanks(cluster));
             for i=1:length(ind)
@@ -93,10 +109,10 @@ classdef TrainMethods
             end
         end
 
-        function [cell] = get_trains(self, times, cluster_set, array)
+        function [cell] = get_trains(self, times, shanks, cluster_set, array)
         % collects all desired spike trains from input array of spike labels, in this case, spike var
             for i=1:length(array)
-                [n, nt] = self.get_spikes(times, cluster_set, array(i));
+                [n, nt] = self.get_spike_set(times, shanks, cluster_set, array(i));
                 cell{i} = nt;
             end
         end

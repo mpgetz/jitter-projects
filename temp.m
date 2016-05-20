@@ -2,48 +2,6 @@
 % Largely used as a record of command-line work
 %tm = TrainMethods;
 
-%plots 9-sample intervals of second channel
-figure;
-p2 = randsample(1:522497, 649);
-for i=1:6
-    subplot(2, 6, i)
-    hold on
-    for j=1:length(p2)
-        plot(wv_4(1, ((i-1)*9)+1:i*9, p4(j)));
-    end
-    ylim([-1000, 1000]);
-    hold off
-
-    subplot(2, 6, i+6)
-    hold on
-    for j=1:length(p2)
-        plot(wv_4(1, ((i-1)*9)+1:i*9, p2(j)));
-    end
-    ylim([-1000, 1000]);
-    hold off
-end
-
-%plots 6-sample intervals of second channel
-figure;
-for i=1:9
-    subplot(2, 9, i)
-    hold on
-    for j=1:length(p2)
-        plot(wv_4(2, ((i-1)*6)+1:i*6, p4(j)));
-    end
-    ylim([-1000, 1000]);
-    hold off
-
-    subplot(2, 9, i+9)
-    hold on
-    for j=1:length(p2)
-        plot(wv_4(2, ((i-1)*6)+1:i*6, p2(j)));
-    end
-    ylim([-1000, 1000]);
-    hold off
-end
-
-
 %% extract msec synch spikes from refcell wrt tcell
 %refcell = cell1{3};
 %tcell = cell2{1};
