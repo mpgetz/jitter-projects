@@ -69,21 +69,18 @@ classdef IO_data
             features = [fet(:,end)/self.rate electrodeGroup*ones(size(clu)) clu fet(:,1:end-1)];
         end
 
-%        %Lazy read functions for segmenting
-%        function [] = read_clu()
-%        end
-%
-%        function [nFeatures, fet] = read_fet(self, electrodeGroup)
-%            filename = [self.path 'Kamran Diba - 2006-6-09_22-24-40.fet.' electrodeGroup];
-%            file = fopen(filename,'r');
-%            if file == -1,
-%                error(['Cannot open file ''' filename '''.']);
-%            end
-%            nFeatures = fscanf(file,'%d',1);
-%            fet = fscanf(file,'%d',[nFeatures,inf])';
-%            fclose(file);
-%        end
+        function [new_set] = prep_data(self, data, reference)
+            %type = clu, fet or spk
+            %if clu:
+            new_set = data(reference);
 
+            %if fet:
+            new_set = [data(reference, 3:end), data(reference, 1)*32552];
+
+            %if spk:
+            new_set = data(:, :, reference);
+        end
+    
     %Write functions 
         function [] = write_clu(self, clu_data, clu_num)
             %clu_num is unique file identifier; should not overwrite existing clu file
@@ -100,21 +97,25 @@ classdef IO_data
         function [] = write_fet(self, fet_var, fet_num)
         %MAY WANT TO WRITE A PREP FUNCTION TO FIX FET VARIABLE FOR EXPORT
         %would be necessary in general case: [nFeatures, fet] = self.read_fet(fet_var);
+            fet_var = int32(fet_var);
             nFeatures = 31;
             if ischar(fet_num) == 0
                 fet_num = int2str(fet_num);
             end
+            s = size(fet_var);
 
             file_name = strcat(self.path2, 'Kamran Diba - 2006-6-09_22-24-40.fet.', fet_num);
             num_clusters = length(unique(fet_var));
-            fid = fopen(file_name, 'w');
-            fprintf(fid, '%d\n', nFeatures);
-            s = size(fet_var);
+            fid = fopen(file_name, 'w', 'n', 'US-ASCII');
+            fprintf(fid, '%i\n', nFeatures);
+%            fclose(fid);
+%            dlmwrite(file_name, fet_var, 'delimiter','\t', 'precision', '-append');
+            format long;
             for i =1:s(1)
-                fprintf(fid, '%d ', fet_var(i, :));
-                fprintf(fid, '\n');
+                fprintf(fid, '%i\t', fet_var(i, [1:end-1]));
+                fprintf(fid, '%i\n', fet_var(i, end));
             end
-            %fprintf(fid, '%d\n', '')
+            fprintf(fid, '\n', '')
         end
 
         function [] = write_spk(self, spk_var, spk_num)
@@ -130,11 +131,11 @@ classdef IO_data
         end
 
         %Write new set of trace files
-        function [] = write_all(self, files)
-            self.write_clu(clu_file)
-            self.write_fet(fet_file)
+        function [] = write_all(self, clu_var, fet_var, spk_var, group_num)
+            self.write_clu(clu_var, group_num)
+            self.write_fet(fet_var, group_num)
+            self.write_spk(spk_var, group_num)
             %self.write_res(res_file)
-            self.write_spk(spk_file)
         end
 
     %Data manipulation functions    
