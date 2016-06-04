@@ -80,6 +80,13 @@ classdef IO_data
             %if spk:
             new_set = data(:, :, reference);
         end
+
+        function [new_clu] = recluster(self, data, ref)
+            %assigns a new cluster value to a subset of spikes specified by ref variable
+            new_clu = data;
+            i = max(data) + 1;
+            new_clu(ref) = i;
+        end
     
     %Write functions 
         function [] = write_clu(self, clu_data, clu_num)
