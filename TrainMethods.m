@@ -116,5 +116,14 @@ classdef TrainMethods
                 cell{i} = nt;
             end
         end
+
+        function [cell] = separate_clusters(self, clu)
+        % separates clu array into sets of positions of cluster labels, useful for pulling out information based on cluster
+            labels = unique(clu);
+            for i=1:length(labels)
+                cell{i} = find(clu == labels(i));
+            end
+        end
+
     end
 end
