@@ -49,10 +49,10 @@ classdef IO_data
         function [features] = fet_in(self, electrodeGroup) %electrodeGroup corresponds to shank number
             % Load .fet file
             if ischar(electrodeGroup) == 0
-                electrodeGroup = int2str(electrodeGroup);
+                str_electrodeGroup = int2str(electrodeGroup);
             end
 
-            filename = [self.path 'Kamran Diba - 2006-6-09_22-24-40.fet.' electrodeGroup];
+            filename = [self.path 'Kamran Diba - 2006-6-09_22-24-40.fet.' str_electrodeGroup];
             clu = self.clu_in(electrodeGroup);
 
             if ~exist(filename),
