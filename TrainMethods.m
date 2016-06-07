@@ -71,18 +71,24 @@ classdef TrainMethods
             hold off
         end
 
-        function [synch] = find_synch(self, n1, n2, lbd, ubd)
+        function [synch, lag, pos] = find_synch(self, n1, n2, lbd, ubd)
         %picks out spikes with synch g/eq lbd and l/eq ubd
         %need a notion of direction (n1-->n2)
         %vectorize this?
             synch = zeros(1, length(n1));
+            lag = zeros(1, length(n1));
             for i=1:length(n1)
                 times = n2-n1(i);
                 if ~isempty(find(lbd<=times & times<=ubd));
                     synch(i) = n1(i);
+                    %report lag of closest spike, without direction preference
+                    lag(i) = times(find(abs(times) == min(abs(times))));
                 end
             end
-            synch = synch(find(synch)); 
+            %remove nonsynch (i.e. 0) values
+            pos = find(synch);
+            synch = synch(pos); 
+            lag = lag(find(lag));
         end
 
        % Kamran dataset specific

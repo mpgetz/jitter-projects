@@ -15,6 +15,9 @@ classdef PlotTools
                     plot(wv_data(i, :, p(y))); 
                     ylim([min(min(wv_data(:,:,p(y)))), max(max(wv_data(:,:,p(y))))]); 
                     xlim([0, 54]);
+                    if i == 1
+                        title(int2str(y));
+                    end
                 end 
             end
         end
