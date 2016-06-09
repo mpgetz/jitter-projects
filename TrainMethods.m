@@ -90,6 +90,16 @@ classdef TrainMethods
             synch = synch(pos); 
             lag = lag(find(lag));
         end
+        
+        function [array] = find_synch_array(self, times, labels)
+            nRef = reshape([1:468], 12, 39);
+            template = zeros(12*39, 12*39);
+            for i=2:length(times)-1
+                t = times(i);
+                ref_times = [times(1:i-1), times(i+1, end)];
+                [e, lag, pos] = self.find_synch(ref_times, t, -.00015, .00015);
+            end
+        end
 
        % Kamran dataset specific
         function [train, train_units] = get_spikes(self, times, cluster_set, label)
