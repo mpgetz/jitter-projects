@@ -82,7 +82,9 @@ classdef TrainMethods
                 if ~isempty(find(lbd<=times & times<=ubd));
                     synch(i) = n1(i);
                     %report lag of closest spike, without direction preference
-                    lag(i) = times(find(abs(times) == min(abs(times))));
+                    %THIS IS A HACK FIX AND SHOULD BE AMMENDED
+                    l = times(find(abs(times) == min(abs(times))));
+                    lag(i) = l;
                 end
             end
             %remove nonsynch (i.e. 0) values
@@ -91,15 +93,30 @@ classdef TrainMethods
             lag = lag(find(lag));
         end
         
-        function [array] = find_synch_array(self, times, labels)
+        function [array] = find_synch_array(self, times, lbd, ubd)
+        %This is not the best approach in this situation; for large arrays, perhaps. 
             nRef = reshape([1:468], 12, 39);
             template = zeros(12*39, 12*39);
+            array = zeros(468, 468, length(times));
+
+            %ignore edge cases for now
             for i=2:length(times)-1
-                t = times(i);
-                ref_times = [times(1:i-1), times(i+1, end)];
-                synch = zeros(1, length(ref_times_));
+                t = times(1, i);
+
+                dist = times(1, :)-t;
+                synch = find(lbd<=dist & dist<=ubd);
+                for j=1:length(synch)-1
+                    for k=j+1:length(synch)
+                        id_1 = nRef(times(2, synch(j)), times(3, synch(j)));
+                        id_2 = nRef(times(2, synch(k)), times(3, synch(k)));
+                        array(id_1, id_2, i) = 1;
+                        array(id_2, id_1, i) = 1;
+                    end
+                end
             end
         end
+
+
 
        % Kamran dataset specific
         function [train, train_units] = get_spikes(self, times, cluster_set, label)
