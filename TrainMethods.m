@@ -97,7 +97,7 @@ classdef TrainMethods
             for i=2:length(times)-1
                 t = times(i);
                 ref_times = [times(1:i-1), times(i+1, end)];
-                [e, lag, pos] = self.find_synch(ref_times, t, -.00015, .00015);
+                synch = zeros(1, length(ref_times_));
             end
         end
 
