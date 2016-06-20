@@ -6,7 +6,20 @@ classdef PlotTools
         function [] = plot_wvs(self, wv_data, p, m, b, n)
             figure;
             %p is position of synchronous spikes (from fet file)
-            %if y > 4, newline
+            %b is start value, n is end value; m is step size (wrt p)
+            if nargin < 3
+                p = 1;
+                m = 1;
+                b = 1;
+                n = 1;
+            end
+
+            if nargin < 4
+                m = 1;
+                b = length(p);
+                n = 1;
+            end
+            
             for y=b:n; 
                 diff = n-b+1;
                 %add optional array of timestamps here

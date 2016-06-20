@@ -2,6 +2,27 @@
 % Largely used as a record of command-line work
 %tm = TrainMethods;
 
+for i=1:length(wv)
+    candidate = wv(i);
+    template = repmat(candidate, 1, 1, 54);
+
+    for j=26:54
+        %m is avg waveform of particular neuron
+        if j < 27
+            ref = [m(:, 27-j:end), zeros(8, 54-j)]     
+        else
+            ref = [zeros(8, j-27), m(:, 1:54-(j-27))]     
+        end
+        pt.plot_wvs(ref)
+        pause(5);
+        close
+
+        %template(:, :, j) = template(:, :, j) - ref;
+    end
+
+    %find subtraction which minimizes the variance
+end
+
 %% extract msec synch spikes from refcell wrt tcell
 %refcell = cell1{3};
 %tcell = cell2{1};
