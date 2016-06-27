@@ -7,23 +7,32 @@ classdef IO_data
             shanks = 12;
             electrodes = 8;
             samples = 54;
-            y_samples = 32;
+            %y_samples = 32;
             rate = 32552;
-            y_rate = 20000;
+            %y_rate = 20000;
             path = '~/Documents/Diba-data/';
-            y_path = '~/Documents/Yuta-data/YutaMouse41-150910-01/';
-            path2 = '~/Documents/Diba-analysis/';
+            %y_path = '~/Documents/Yuta-data/YutaMouse41-150910-01/';
+            path_out = '~/Documents/Diba-analysis/';
     end
 
     methods
+        %constructor method
+        function self = IO_data(data_ref)
+            if data_ref == 'y'
+                self.samples = 32;
+                self.rate = 20000;
+                self.path = '~/Documents/Yuta-data/YutaMouse41-150910-01/';
+            end
+        end
+
         %import clu file and strip off first elem. 
         function [clu] = clu_in(self, electrodeGroup)
             if ischar(electrodeGroup) == 0
                 electrodeGroup = int2str(electrodeGroup);
             end
 
-            filename = [self.y_path 'YutaMouse41-150910-01.clu.' electrodeGroup];
-            %filename = [self.path 'Kamran Diba - 2006-6-09_22-24-40.clu.' electrodeGroup];
+            %filename = [self.y_path 'YutaMouse41-150910-01.clu.' electrodeGroup];
+            filename = [self.path 'Kamran Diba - 2006-6-09_22-24-40.clu.' electrodeGroup];
             clu = load(filename);
             f_e = clu(1);
             clu = clu(2:end);
@@ -36,8 +45,8 @@ classdef IO_data
                 electrodeGroup = int2str(electrodeGroup);
             end
 
-            filename = [self.y_path 'YutaMouse41-150910-01.spk.' electrodeGroup];
-            %filename = [self.path 'Kamran Diba - 2006-6-09_22-24-40.spk.' electrodeGroup];
+            %filename = [self.y_path 'YutaMouse41-150910-01.spk.' electrodeGroup];
+            filename = [self.path 'Kamran Diba - 2006-6-09_22-24-40.spk.' electrodeGroup];
             file = fopen(filename);
             if file == -1
                 display(filename);
@@ -48,8 +57,8 @@ classdef IO_data
                 %dims: electrode:sample:spike
 
             %spikes = length(clu_data);
-            forms = reshape(wvfm, self.electrodes, self.y_samples, []);
-            %forms = reshape(wvfm, self.electrodes, self.samples, []);
+            %forms = reshape(wvfm, self.electrodes, self.y_samples, []);
+            forms = reshape(wvfm, self.electrodes, self.samples, []);
         end
 
         function [features] = fet_in(self, electrodeGroup) %electrodeGroup corresponds to shank number
@@ -58,8 +67,8 @@ classdef IO_data
                 str_electrodeGroup = int2str(electrodeGroup);
             end
 
-            filename = [self.y_path 'YutaMouse41-150910-01.fet.' electrodeGroup];
-            %filename = [self.path 'Kamran Diba - 2006-6-09_22-24-40.fet.' str_electrodeGroup];
+            %filename = [self.y_path 'YutaMouse41-150910-01.fet.' electrodeGroup];
+            filename = [self.path 'Kamran Diba - 2006-6-09_22-24-40.fet.' str_electrodeGroup];
             clu = self.clu_in(electrodeGroup);
 
             if ~exist(filename),
@@ -73,8 +82,8 @@ classdef IO_data
             fet = fscanf(file,'%f',[nFeatures,inf])';
             fclose(file);
             
-            features = [fet(:,end)/self.y_rate electrodeGroup*ones(size(clu)) clu fet(:,1:end-1)];
-            %features = [fet(:,end)/self.rate electrodeGroup*ones(size(clu)) clu fet(:,1:end-1)];
+            %features = [fet(:,end)/self.y_rate electrodeGroup*ones(size(clu)) clu fet(:,1:end-1)];
+            features = [fet(:,end)/self.rate electrodeGroup*ones(size(clu)) clu fet(:,1:end-1)];
         end
 
         function [new_set] = prep_data(self, data, reference)
@@ -103,7 +112,7 @@ classdef IO_data
                 clu_num = int2str(clu_num);
             end
 
-            file_name = strcat(self.path2, 'Kamran Diba - 2006-6-09_22-24-40.clu.', clu_num);
+            file_name = strcat(self.path_out, 'Kamran Diba - 2006-6-09_22-24-40.clu.', clu_num);
             num_clusters = length(unique(clu_data));
             fid = fopen(file_name, 'w');
             fprintf(fid, '%d\n', num_clusters, clu_data, '');
@@ -119,7 +128,7 @@ classdef IO_data
             end
             s = size(fet_var);
 
-            file_name = strcat(self.path2, 'Kamran Diba - 2006-6-09_22-24-40.fet.', fet_num);
+            file_name = strcat(self.path_out, 'Kamran Diba - 2006-6-09_22-24-40.fet.', fet_num);
             num_clusters = length(unique(fet_var));
             fid = fopen(file_name, 'w', 'n', 'US-ASCII');
             fprintf(fid, '%i\n', nFeatures);
@@ -139,7 +148,7 @@ classdef IO_data
             end
 
             spk_var = reshape(spk_var, [], 1);
-            file_name = strcat(self.path2, 'Kamran Diba - 2006-6-09_22-24-40.spk.', spk_num);
+            file_name = strcat(self.path_out, 'Kamran Diba - 2006-6-09_22-24-40.spk.', spk_num);
             fid = fopen(file_name, 'w');
             fwrite(fid, spk_var, 'int16');
             
