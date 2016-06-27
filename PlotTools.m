@@ -1,8 +1,16 @@
 classdef PlotTools
     properties
+        samples = 54;
     end
 
     methods
+        %init method
+        function self = PlotTools(data_ref)
+            if data_ref == 'y'
+                self.samples = 32;
+            end
+        end
+
         function [] = plot_wvs(self, wv_data, p, m, b, n)
             figure;
             %p is position of synchronous spikes (from fet file)
@@ -31,8 +39,7 @@ classdef PlotTools
                     subplot(8*m, diff, (((y-b)+1)+(diff*(i-1)))); 
                     plot(wv_data(i, :, p(y))); 
                     ylim([min_amp, max_amp]); 
-                    xlim([0, 32]);
-                    %xlim([0, 54]);
+                    xlim([0, self.samples]);
                     if i == 1
                         title(int2str(y));
                     end
@@ -40,6 +47,7 @@ classdef PlotTools
             end
         end
 
+        %DON'T USE WITH MODIFICATIONS
         function [] = plot_interval_wvs(self, wv_data, channel, samples, synch)
             %plots intervals of given channel with width 'samples'
             %if samples does not divide 54, truncate lagging elements

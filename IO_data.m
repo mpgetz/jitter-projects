@@ -22,6 +22,7 @@ classdef IO_data
                 self.samples = 32;
                 self.rate = 20000;
                 self.path = '~/Documents/Yuta-data/YutaMouse41-150910-01/';
+                self.path_out = '~/Documents/';
             end
         end
 
