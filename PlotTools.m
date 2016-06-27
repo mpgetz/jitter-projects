@@ -20,14 +20,19 @@ classdef PlotTools
                 n = 1;
             end
             
+            dim = size(wv_data);
+            set = reshape(wv_data(:, :, p), dim(1), []);
+            min_amp = min(min(set));
+            max_amp = max(max(set));
             for y=b:n; 
                 diff = n-b+1;
                 %add optional array of timestamps here
                 for i=1:8; 
                     subplot(8*m, diff, (((y-b)+1)+(diff*(i-1)))); 
                     plot(wv_data(i, :, p(y))); 
-                    ylim([min(min(wv_data(:,:,p(y)))), max(max(wv_data(:,:,p(y))))]); 
-                    xlim([0, 54]);
+                    ylim([min_amp, max_amp]); 
+                    xlim([0, 32]);
+                    %xlim([0, 54]);
                     if i == 1
                         title(int2str(y));
                     end
