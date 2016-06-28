@@ -5,6 +5,8 @@
 for i=1:1%length(wv)
     candidate = wv;
     template = repmat(candidate, 1, 1, 54+1);
+    k = 8;
+    m = ms{k};
 
     for j=0:54
         %m is avg waveform of particular neuron
