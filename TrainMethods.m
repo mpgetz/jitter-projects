@@ -1,7 +1,11 @@
 % collection of spike train analysis methods
 
 classdef TrainMethods
+    properties
+    end
+
     methods
+        %HORRIBLY SLOW, BUT WORKS
         function [counts] = cch(self, n1, n2, bin, lag, maxlag);
         % creates CCH for spike trains n1, n2
         % lag, maxlag, expect integers
