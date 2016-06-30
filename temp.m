@@ -2,6 +2,7 @@
 % Largely used as a record of command-line work
 %tm = TrainMethods;
 
+%runs subtraction for particular 
 for i=1:1%length(wv)
     candidate = wv;
     template = repmat(candidate, 1, 1, 54+1);
