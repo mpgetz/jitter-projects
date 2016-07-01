@@ -2,32 +2,30 @@
 % Largely used as a record of command-line work
 %tm = TrainMethods;
 
-%% extract msec synch spikes from refcell wrt tcell
-%refcell = cell1{3};
-%tcell = cell2{1};
-%synch = zeros(1, length(refcell));
-%
-%for i=1:length(refcell)
-%    if ~isempty(find(refcell(i)>=tcell & tcell>=refcell(i)-.00015))
-%    %if ~isempty(find(refcell(i)+.00015>=tcell & tcell>=refcell(i)))
-%        synch(i) = refcell(i);
+for i = 13:32
+    subplot(4, 5, i-12);
+    t1 = fets{inq(i, 2)}(find(clus{inq(i, 2)}==inq(i, 3)));
+    t2 = fets{inq(i, 4)}(find(clus{inq(i, 4)}==inq(i, 5)));
+    tm.cch(randsample(t1, 1000), t2, .00025, 1, 10);
+end
+
+
+%%compute all across-shank synch pairs
+%cat = [];
+%for i=1:10
+%    set1 = unique(clus{i});
+%    set2 = unique(clus{i+1});
+%    for j=1:length(set1)
+%        for k = 1:length(set2)
+%            synch = [];
+%            t1 = fets{i}(find(clus{i}==set1(j)));
+%            t2 = fets{i+1}(find(clus{i+1}==set2(k)));
+%            synch = tm.find_synch(t1, t2, -.0005, .0005);
+%            cat = [cat; length(synch)/length(t1), i, j, i+1, k];
+%        end
 %    end
 %end
 %
-% remove hanging zeros
-%synchp = find(synch);
-%synch = synch(synchp);
-
-% compared synchronous events for two different neuron pairs
-%%count = 0; 
-%l1 = []; l2 = [];
-%for i=1:649; 
-%    %count = count + sum(abs(synch-synch811(i))<1); 
-%    if sum(abs(synch-synch811(i))<1) > 0
-%        l1 = [l1, synch(find(abs(synch-synch811(i))<1))];
-%        l2 = [l2, synch811(i)];
-%    end 
-%end;
 
 % computes position of synch from above relative to entire time series
 %n = zeros(1, length(spike.t));

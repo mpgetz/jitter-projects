@@ -87,14 +87,14 @@ classdef TrainMethods
                     synch(i) = n1(i);
                     %report lag of closest spike, without direction preference
                     %THIS IS A HACK FIX AND SHOULD BE AMMENDED
-                    l = times(find(abs(times) == min(abs(times))));
-                    lag(i) = l;
+                    %l = times(find(abs(times) == min(abs(times))));
+                    %lag(i) = l;
                 end
             end
             %remove nonsynch (i.e. 0) values
             pos = find(synch);
             synch = synch(pos); 
-            lag = lag(find(lag));
+            %lag = lag(find(lag));
         end
         
         function [array] = find_synch_array(self, times, lbd, ubd)
