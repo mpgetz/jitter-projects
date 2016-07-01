@@ -7,11 +7,8 @@ classdef IO_data
             shanks = 12;
             electrodes = 8;
             samples = 54;
-            %y_samples = 32;
             rate = 32552;
-            %y_rate = 20000;
             path = '~/Documents/Diba-data/';
-            %y_path = '~/Documents/Yuta-data/YutaMouse41-150910-01/';
             path_out = '~/Documents/Diba-analysis/';
     end
 

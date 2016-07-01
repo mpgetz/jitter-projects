@@ -33,6 +33,35 @@ classdef WaveformMethods
             channel = find(min(min(wv, [], 2)));
             ref_wvs = self.wv_mins(find(wv_mins(2, :) == channel));
         end
+
+        function [out] = something(self, in)
+            %runs subtraction for particular 
+            for i=1:1%length(wv)
+                candidate = wv;
+                template = repmat(candidate, 1, 1, 54+1);
+                k = 8;
+                m = ms{k};
+
+                for j=0:54
+                    %m is avg waveform of particular neuron
+                    if j < 27
+                        ref = [m(:, 27-j:end), zeros(8, 27-j-1)];     
+                    else
+                        ref = [zeros(8, j-27), m(:, 1:54-(j-27))];     
+                    end
+                    %pt.plot_wvs(ref)
+                    %pause(5);
+                    %close
+
+                    %display(size(template(:, :, j+1))); 
+                    %display(size(ref));
+                    template(:, :, j+1) = template(:, :, j+1) - ref;
+                end
+
+                %find subtraction which minimizes the variance
+            end
+        end
+
     end
 
 end
