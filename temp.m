@@ -2,10 +2,39 @@
 % Largely used as a record of command-line work
 %tm = TrainMethods;
 
-for i = 13:32
-    subplot(4, 5, i-12);
-    t1 = fets{inq(i, 2)}(find(clus{inq(i, 2)}==inq(i, 3)));
-    t2 = fets{inq(i, 4)}(find(clus{inq(i, 4)}==inq(i, 5)));
+%candidates = [];
+%edges = [-.00375:.0005:.00375];
+%
+%for i = 1:100
+%    fet1 = fets{inq(i, 2)};
+%    fet2 = fets{inq(i, 4)};
+%    t1 = fet1(find(clus{inq(i, 2)}==inq(i, 3)));
+%    t2 = fet2(find(clus{inq(i, 4)}==inq(i, 5)));
+%    %check for excess size and sample if >10000
+%    if length(t1)>10000
+%    	t1 = randsample(t1, 10000);
+%    end
+%    if length(t2)>10000
+%    	t2 = randsample(t2, 10000);
+%    end
+%
+%    %compute hist values and reject any with 0 in a bin
+%    diff = repmat(t1', length(t2), 1) - repmat(t2, 1, length(t1));
+%    counts = histcounts(diff, edges);
+%    if length(find(counts)) == length(edges)-1
+%    	 candidates = [candidates; inq(i, :)];
+%    end
+%end
+%
+%    %tm.cch(randsample(t1, 1000), t2, .00025, 1, 10);
+
+
+for i = 1:length(candidates)
+    subplot(4, 5, i);
+    fet1 = fets{candidates(i, 2)};
+    fet2 = fets{candidates(i, 4)};
+    t1 = fet1(find(clus{candidates(i, 2)}==candidates(i, 3)));
+    t2 = fet2(find(clus{candidates(i, 4)}==candidates(i, 5)));
     tm.cch(randsample(t1, 1000), t2, .00025, 1, 10);
 end
 
