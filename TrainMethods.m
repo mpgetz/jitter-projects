@@ -6,12 +6,12 @@ classdef TrainMethods
 
     methods
         %HORRIBLY SLOW, BUT WORKS
-        function [counts] = cch(self, n1, n2, bin, lag, maxlag);
+        function [counts] = cch(self, n1, n2, bin, maxlag);
         % creates CCH for spike trains n1, n2
-        % lag, maxlag, expect integers
+        % maxlag, expect integers
         % produces response with n1 reference, n2 target
-            counts = zeros(1, (2*maxlag)/lag);
-            lags = -maxlag:lag:maxlag;
+            counts = zeros(1, (2*maxlag)+1);
+            lags = -maxlag:1:maxlag;
 
             %n1 = round(n1, 3);
             %n2 = round(n2, 3);

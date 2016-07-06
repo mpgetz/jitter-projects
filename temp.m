@@ -2,66 +2,78 @@
 % Largely used as a record of command-line work
 %tm = TrainMethods;
 
-%candidates = [];
-%edges = [-.00375:.0005:.00375];
-%
-%for i = 1:1668
-%    fet1 = fets{inq(i, 2)};
-%    fet2 = fets{inq(i, 4)};
-%    t1 = fet1(find(clus{inq(i, 2)}==inq(i, 3)));
-%    t2 = fet2(find(clus{inq(i, 4)}==inq(i, 5)));
-%    %check for excess size and sample if >10000
-%    if length(t1)>10000
-%    	t1 = randsample(t1, 10000);
-%    end
-%    if length(t2)>10000
-%    	t2 = randsample(t2, 10000);
-%    end
-%
-%    %compute hist values and reject any with 0 in a bin
-%    diff = repmat(t1', length(t2), 1) - repmat(t2, 1, length(t1));
-%    counts = histcounts(diff, edges);
-%    if length(find(counts)) == length(edges)-1
-%    	 candidates = [candidates; inq(i, :)];
-%    end
-%end
-%
-%    %tm.cch(randsample(t1, 1000), t2, .00025, 1, 10);
+%compute all across-shank synch pairs
+inq = [];
+for i=1:7
+    set1 = unique(clus{i});
+    set2 = unique(clus{i+1});
+    %trim off '0' cluster (usually artifact)
+    set1 = set1(find(set1));
+    set2 = set2(find(set2));
 
-
-for i = 1:length(new_c)
-    subplot(3, 5, i);
-    fet1 = fets{new_c(i, 2)};
-    fet2 = fets{new_c(i, 4)};
-    t1 = fet1(find(clus{new_c(i, 2)}==new_c(i, 3)));
-    t2 = fet2(find(clus{new_c(i, 4)}==new_c(i, 5)));
-
-    %if length(t1)>5000
-    %	t1 = randsample(t1, 5000);
-    %end
-    %if length(t2)>5000
-    %	t2 = randsample(t2, 5000);
-    %end
-    tm.cch(t1, t2, .00005, 1, 15);
+    for j=1:length(set1)
+        for k = 1:length(set2)
+            synch = [];
+            t1 = fets{i}(find(clus{i}==set1(j)));
+            t2 = fets{i+1}(find(clus{i+1}==set2(k)));
+            synch = tm.find_synch(t1, t2, -.0005, .0005);
+            inq = [inq; length(synch)/length(t1), i, j, i+1, k];
+        end
+    end
 end
 
+%loop over all synch pairs and consider only those which
+% have at least one event in each of 10 bins at .5msec increments
 
-%%compute all across-shank synch pairs
-%cat = [];
-%for i=1:10
-%    set1 = unique(clus{i});
-%    set2 = unique(clus{i+1});
-%    for j=1:length(set1)
-%        for k = 1:length(set2)
-%            synch = [];
-%            t1 = fets{i}(find(clus{i}==set1(j)));
-%            t2 = fets{i+1}(find(clus{i+1}==set2(k)));
-%            synch = tm.find_synch(t1, t2, -.0005, .0005);
-%            cat = [cat; length(synch)/length(t1), i, j, i+1, k];
-%        end
-%    end
+candidates = [];
+edges = [-.00375:.0005:.00375];
+
+for i = 1:10
+    fet1 = fets{inq(i, 2)};
+    fet2 = fets{inq(i, 4)};
+    t1 = fet1(find(clus{inq(i, 2)}==inq(i, 3)));
+    t2 = fet2(find(clus{inq(i, 4)}==inq(i, 5)));
+
+    %check for excess size and sample if >10000
+    if length(t1)>5000
+    	t1 = randsample(t1, 5000);
+    end
+    if length(t2)>5000
+    	t2 = randsample(t2, 5000);
+    end
+
+    %compute hist values and reject any with 0 in a bin
+    diff = repmat(t1', length(t2), 1) - repmat(t2, 1, length(t1));
+    counts = histcounts(diff, edges);
+    if length(find(counts)) == length(edges)-1
+    	 candidates = [candidates; inq(i, :)];
+    end
+
+    %figure;
+    %bar(counts);
+end
+
+%figure;
+%tm.cch(t1, t2, .001, 0);
+
+%
+%for i = 1:length(new_c)
+%    subplot(3, 5, i);
+%    fet1 = fets{new_c(i, 2)};
+%    fet2 = fets{new_c(i, 4)};
+%    t1 = fet1(find(clus{new_c(i, 2)}==new_c(i, 3)));
+%    t2 = fet2(find(clus{new_c(i, 4)}==new_c(i, 5)));
+%
+%    %if length(t1)>5000
+%    %	t1 = randsample(t1, 5000);
+%    %end
+%    %if length(t2)>5000
+%    %	t2 = randsample(t2, 5000);
+%    %end
+%    tm.cch(t1, t2, .00005, 1, 15);
 %end
 %
+
 
 % computes position of synch from above relative to entire time series
 %n = zeros(1, length(spike.t));
