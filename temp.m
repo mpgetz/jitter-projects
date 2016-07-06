@@ -5,7 +5,7 @@
 %candidates = [];
 %edges = [-.00375:.0005:.00375];
 %
-%for i = 1:100
+%for i = 1:1668
 %    fet1 = fets{inq(i, 2)};
 %    fet2 = fets{inq(i, 4)};
 %    t1 = fet1(find(clus{inq(i, 2)}==inq(i, 3)));
@@ -29,13 +29,20 @@
 %    %tm.cch(randsample(t1, 1000), t2, .00025, 1, 10);
 
 
-for i = 1:length(candidates)
-    subplot(4, 5, i);
-    fet1 = fets{candidates(i, 2)};
-    fet2 = fets{candidates(i, 4)};
-    t1 = fet1(find(clus{candidates(i, 2)}==candidates(i, 3)));
-    t2 = fet2(find(clus{candidates(i, 4)}==candidates(i, 5)));
-    tm.cch(randsample(t1, 1000), t2, .00025, 1, 10);
+for i = 1:length(new_c)
+    subplot(3, 5, i);
+    fet1 = fets{new_c(i, 2)};
+    fet2 = fets{new_c(i, 4)};
+    t1 = fet1(find(clus{new_c(i, 2)}==new_c(i, 3)));
+    t2 = fet2(find(clus{new_c(i, 4)}==new_c(i, 5)));
+
+    %if length(t1)>5000
+    %	t1 = randsample(t1, 5000);
+    %end
+    %if length(t2)>5000
+    %	t2 = randsample(t2, 5000);
+    %end
+    tm.cch(t1, t2, .00005, 1, 15);
 end
 
 
