@@ -6,6 +6,7 @@
 examples = {};
 templates = {};
 
+%compute waveform templates by averaging and
 %bound max by sum of largest waveform averages
 for i=1:length(wvs)
     %compute template waves
@@ -30,3 +31,8 @@ for i=1:length(wvs)
     examples{i} = candidates;
 end
 
+%perform matching and subtraction based on location
+% of largest peaks to generate candidates
+
+
+%perform stat analysis to generate examples of extreme synch
