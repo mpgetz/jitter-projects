@@ -18,7 +18,8 @@ classdef IO_data
             if data_ref == 'y'
                 self.samples = 32;
                 self.rate = 20000;
-                self.path = '~/Documents/Yuta-data/YutaMouse41-150910-01/';
+                %self.path = '~/Documents/Yuta-data/YutaMouse41-150910-01/';
+                self.path = '~/Dropbox/ToMatt/YutaMouse41-150910/';
                 self.path_out = '~/Documents/';
             end
         end
@@ -29,8 +30,8 @@ classdef IO_data
                 electrodeGroup = int2str(electrodeGroup);
             end
 
-            %filename = [self.y_path 'YutaMouse41-150910-01.clu.' electrodeGroup];
-            filename = [self.path 'Kamran Diba - 2006-6-09_22-24-40.clu.' electrodeGroup];
+            filename = [self.path 'YutaMouse41-150910.clu.' electrodeGroup];
+            %filename = [self.path 'Kamran Diba - 2006-6-09_22-24-40.clu.' electrodeGroup];
             clu = load(filename);
             f_e = clu(1);
             clu = clu(2:end);
@@ -43,8 +44,8 @@ classdef IO_data
                 electrodeGroup = int2str(electrodeGroup);
             end
 
-            %filename = [self.y_path 'YutaMouse41-150910-01.spk.' electrodeGroup];
-            filename = [self.path 'Kamran Diba - 2006-6-09_22-24-40.spk.' electrodeGroup];
+            filename = [self.path 'YutaMouse41-150910.spk.' electrodeGroup];
+            %filename = [self.path 'Kamran Diba - 2006-6-09_22-24-40.spk.' electrodeGroup];
             file = fopen(filename);
             if file == -1
                 display(filename);
@@ -62,11 +63,11 @@ classdef IO_data
         function [features] = fet_in(self, electrodeGroup) %electrodeGroup corresponds to shank number
             % Load .fet file
             if ischar(electrodeGroup) == 0
-                str_electrodeGroup = int2str(electrodeGroup);
+                electrodeGroup = int2str(electrodeGroup);
             end
 
-            %filename = [self.y_path 'YutaMouse41-150910-01.fet.' electrodeGroup];
-            filename = [self.path 'Kamran Diba - 2006-6-09_22-24-40.fet.' str_electrodeGroup];
+            filename = [self.path 'YutaMouse41-150910.fet.' electrodeGroup];
+            %filename = [self.path 'Kamran Diba - 2006-6-09_22-24-40.fet.' str_electrodeGroup];
             clu = self.clu_in(electrodeGroup);
 
             if ~exist(filename),
