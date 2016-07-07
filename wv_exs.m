@@ -8,7 +8,8 @@ templates = {};
 
 %compute waveform templates by averaging and
 %bound max by sum of largest waveform averages
-for i=1:length(wvs)
+%for i=1:length(wvs)
+for i=2:2
     %compute template waves
     clu_set = unique(clus{i});
     %remove '0' cluster
@@ -20,15 +21,15 @@ for i=1:length(wvs)
         avg = mean(wvs{i}(:, :, find(clus{i}==clu_set(j))), 3);
         avgs = [avgs, avg];
     end
-    template{i} = avgs;
+    templates{i} = reshape(avgs, 8, 54, []);
     %sort template waves 
 
-    for wv=1:size(wvs{i}, 3)
-        if isempty(find(max(wvs{i}(:, :, wv))>200))
-            candidates = [candidates, wvs{i}(:, :, wv)];
-        end
-    end
-    examples{i} = candidates;
+    %for wv=1:size(wvs{i}, 3)
+    %    if isempty(find(max(wvs{i}(:, :, wv))>200))
+    %        candidates = [candidates, wvs{i}(:, :, wv)];
+    %    end
+    %end
+    %examples{i} = candidates;
 end
 
 %perform matching and subtraction based on location

@@ -11,33 +11,30 @@ classdef PlotTools
             end
         end
 
-        function [] = plot_wvs(self, wv_data, p, m, b, n)
+        function [] = plot_wvs(self, wv_data, x0, xN, pos, step)
             figure;
-            %p is position of synchronous spikes (from fet file)
-            %b is start value, n is end value; m is step size (wrt p)
-            if nargin < 3
-                p = 1;
-                m = 1;
-                b = 1;
-                n = 1;
+            %pos is position of synchronous spikes (from fet file)
+            %x0 is start value, xN is end value; m is step size (wrt pos)
+            if nargin < 5
+                %assumes that x0 is positive
+                pos = [1:1:xN];
+                step = 1;
             end
 
-            if nargin < 4
-                m = 1;
-                b = length(p);
-                n = 1;
+            if nargin < 6 
+                step = 1;
             end
             
             dim = size(wv_data);
-            set = reshape(wv_data(:, :, p), dim(1), []);
+            set = reshape(wv_data(:, :, pos), dim(1), []);
             min_amp = min(min(set));
             max_amp = max(max(set));
-            for y=b:n; 
-                diff = n-b+1;
+            for y=x0:xN; 
+                diff = xN-x0+1;
                 %add optional array of timestamps here
                 for i=1:8; 
-                    subplot(8*m, diff, (((y-b)+1)+(diff*(i-1)))); 
-                    plot(wv_data(i, :, p(y))); 
+                    subplot(8*step, diff, (((y-x0)+1)+(diff*(i-1)))); 
+                    plot(wv_data(i, :, pos(y))); 
                     ylim([min_amp, max_amp]); 
                     xlim([0, self.samples]);
                     if i == 1
@@ -47,7 +44,7 @@ classdef PlotTools
             end
         end
 
-        %DON'T USE WITH MODIFICATIONS
+        %DON'T USE WITHOUT MODIFICATIONS
         function [] = plot_interval_wvs(self, wv_data, channel, samples, synch)
             %plots intervals of given channel with width 'samples'
             %if samples does not divide 54, truncate lagging elements
