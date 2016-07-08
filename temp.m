@@ -22,7 +22,7 @@
 %        end
 %    end
 %end
-%
+
 %%loop over all synch pairs and consider only those which
 %% have at least one event in each of 10 bins at .5msec increments
 %
