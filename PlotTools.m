@@ -15,6 +15,17 @@ classdef PlotTools
             figure;
             %pos is position of synchronous spikes (from fet file)
             %x0 is start value, xN is end value; m is step size (wrt pos)
+            if nargin < 3
+                %assumes only one spike is being plotted
+                for i=1:8; 
+                    subplot(8, 1, i); 
+                    plot(wv_data(i, :)); 
+                    ylim([min(min(wv_data)), max(max(wv_data))]); 
+                    xlim([0, self.samples]);
+                end 
+                return
+            end
+                
             if nargin < 5
                 %assumes that x0 is positive
                 pos = [1:1:xN];
