@@ -36,6 +36,27 @@ classdef WaveformMethods
             ref_wvs = self.wv_mins(find(wv_mins(2, :) == channel));
         end
 
+        function [coeffs, clu_data] = get_fets(self, wvs, clus)
+            %re-computes pca on waveset and stores top 3 coeff vectors for
+            %eg. use with waveform subtraction, below
+            
+            %collect all waveforms from each channel & compute pca
+            samples = 54;
+            u_clus = unique(clus);
+            u_clus = u_clus(find(u_clus));
+
+            for i=1:8
+                vec{i} = reshape(wvs(i, :, :), samples, [])';
+                coeffs{i} = pca(vec{i});
+
+                for j=1:length(u_clus)
+                    clu = find(clus == u_clus(j));
+                    fets = vec{i}(clu, :)*coeffs{i}(:, 1);
+                    clu_data{j}(i, :) = [mean(fets), std(fets)];                
+                end
+            end
+        end
+
         function [templates] = get_template_wvs(self, wvs, clus)
             for i=2:2
                 %compute template waves
