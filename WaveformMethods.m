@@ -43,7 +43,7 @@ classdef WaveformMethods
             %collect all waveforms from each channel & compute pca
             samples = 54;
             u_clus = unique(clus);
-            u_clus = u_clus(find(u_clus));
+            u_clus = u_clus(find(u_clus ~= 0 & u_clus ~= 1));
 
             for i=1:8
                 vec{i} = reshape(wvs(i, :, :), samples, [])';
@@ -51,8 +51,11 @@ classdef WaveformMethods
 
                 for j=1:length(u_clus)
                     clu = find(clus == u_clus(j));
-                    fets = vec{i}(clu, :)*coeffs{i}(:, 1);
-                    clu_data{j}(i, :) = [mean(fets), std(fets)];                
+                    fets1 = vec{i}(clu, :)*coeffs{i}(:, 1);
+                    fets2 = vec{i}(clu, :)*coeffs{i}(:, 2);
+                    fets3 = vec{i}(clu, :)*coeffs{i}(:, 3);
+                    clu_data{j}(i, :, 1) = [mean(fets1), mean(fets2), mean(fets3)];                
+                    clu_data{j}(i, :, 2) = [std(fets1), std(fets2), std(fets3)];                
                 end
             end
         end
@@ -61,8 +64,8 @@ classdef WaveformMethods
             for i=2:2
                 %compute template waves
                 clu_set = unique(clus{i});
-                %remove '0' cluster
-                clu_set = clu_set(find(clu_set));
+                %remove '0' and '1' clusters
+                clu_set = clu_set(find(clu_set ~= 0 & clu_set ~= 1));
 
                 avg = [];
                 avgs = [];
