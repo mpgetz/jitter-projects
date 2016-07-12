@@ -1,13 +1,26 @@
 %Exploratory code for finding overlapping wave synch in spk data
 
-%exclude waveforms with excessive continuous oscillation: 
-% assume this suggests noise
+%compute all pca's for new templates
+for i=1:length(cands)
+    cand_fets{i} = zeros(8, 55);
+    for j=1:8
+        %for now, take only first pc
+        test_fets = reshape(cands{i}(j, :, :), 54, [])'*coeffs{j}(:, 1);
+        cand_fets{i}(j, :) = reshape(test_fets, 1, []);
+    end
+end
 
-%examples = {};
-%templates = {};
+%THIS IS GROSS
+lcd = length(clu_data);
 
-%perform matching and subtraction based on location
-% of largest peaks to generate candidates
-
-
-%perform stat analysis to generate examples of extreme synch
+for i=1:length(cand_fets)
+    p{i} = zeros(lcd, 55);
+    for j=1:length(cand_fets{i})
+        for k=1:length(clu_data)
+            m = clu_data{k}(:, 1);
+            s = clu_data{k}(:, 2);
+            %compute (not a) probability for each candidate
+            p{i}(k, j) = sum(abs(m - cand_fets{i}(:, j))./s);
+        end
+    end
+end

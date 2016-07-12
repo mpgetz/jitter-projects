@@ -122,9 +122,12 @@ classdef WaveformMethods
                     stack(:, :, j+1) = stack(:, :, j+1) - ref;
                 end
                 candidates{i} = stack;
-
-                %find subtraction which minimizes the variance
             end
+        end
+
+        function [wvfm] = resolve_synch(self, stuff)
+            %collects methods to return most probable cluster resolution of
+            %overlapping waveforms from the noise
         end
 
     end
