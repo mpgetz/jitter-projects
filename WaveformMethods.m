@@ -61,7 +61,8 @@ classdef WaveformMethods
         end
 
         function [templates] = get_template_wvs(self, wvs, clus)
-            for i=2:2
+	    %expects cells for wvs and clus. may make more flexible later
+            for i=1:1
                 %compute template waves
                 clu_set = unique(clus{i});
                 %remove '0' and '1' clusters
