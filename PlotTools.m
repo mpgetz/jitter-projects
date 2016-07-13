@@ -56,6 +56,7 @@ classdef PlotTools
         end
 
         %DON'T USE WITHOUT MODIFICATIONS
+        %{
         function [] = plot_interval_wvs(self, wv_data, channel, samples, synch)
             %plots intervals of given channel with width 'samples'
             %if samples does not divide 54, truncate lagging elements
@@ -90,6 +91,7 @@ classdef PlotTools
                 hold off
             end
         end
+        %}
 
     end
 end
