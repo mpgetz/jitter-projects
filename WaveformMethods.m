@@ -62,7 +62,8 @@ classdef WaveformMethods
 
         function [templates] = get_template_wvs(self, wvs, clus)
 	    %expects cells for wvs and clus. may make more flexible later
-            for i=1:1
+            %for i=1:1
+            for i=2:2
                 %compute template waves
                 clu_set = unique(clus{i});
                 %remove '0' and '1' clusters
@@ -123,7 +124,20 @@ classdef WaveformMethods
 
                     %display(size(template(:, :, j+1))); 
                     %display(size(ref));
-                    stack(:, :, j+1) = stack(:, :, j+1) - ref;
+                    wv = stack(:, :, j+1) - ref;
+
+                    %recenter remaining waveform on max neg. deflection
+                    col = min(wv, [], 2);
+                    row = find(min(col)==col);
+                    peak = find(wv(row, :)==min(col));
+                    diff = 27 - peak(1);
+                    %change 54 to generic 'samples'
+                    if diff >= 0
+                        wv = [zeros(8, diff), wv(:, 1:54-diff)];
+                    else
+                        wv = [wv(:, abs(diff):end), zeros(8, abs(diff)-1)];
+                    end
+                    stack(:, :, j+1) = wv;
                 end
                 candidates{i} = stack;
             end

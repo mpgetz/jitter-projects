@@ -25,3 +25,8 @@ for i=1:length(cand_fets)
         end
     end
 end
+
+a = []; 
+for i=1:length(cand_fets); 
+    a = [a; min(min(p{i})), find(p{i}==min(min(p{i})))]; 
+end
