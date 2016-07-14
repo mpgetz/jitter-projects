@@ -60,10 +60,19 @@ classdef WaveformMethods
             end
         end
 
-        function [templates] = get_template_wvs(self, wvs, clus)
-	    %expects cells for wvs and clus. may make more flexible later
-            %for i=1:1
-            for i=2:2
+        function [templates] = get_template_wvs(self, wvs, clus, shank)
+	        %expects cells for wvs and clus. may make more flexible later
+            %expects int for shank
+
+            if nargin < 4
+                j = 1;
+                k = length(wvs);
+            else
+                j = shank;
+                k = shank;
+            end
+
+            for i=j:k
                 %compute template waves
                 clu_set = unique(clus{i});
                 %remove '0' and '1' clusters
@@ -87,8 +96,10 @@ classdef WaveformMethods
             end
         end
 
-        function [candidates] = do_subtraction(self, shell, templates)
+        function [candidates, sub_temps] = do_subtraction(self, shell, templates)
             %runs subtraction for particular shell waveform (usu. noise)
+            %sub_temps returns position of particular templates used
+            %(used in resolve_synch to ID clu of interest)
             %assumes templates is 8x54x[] %%NEED TO GENERALIZE
 
             %crude first pass based on max deflection (abs min)
@@ -143,9 +154,60 @@ classdef WaveformMethods
             end
         end
 
-        function [wvfm] = resolve_synch(self, stuff)
+        function [wvfm, clu1, clu2, epsilon] = resolve_synch(self, wv, wvs, clus, shank)
             %collects methods to return most probable cluster resolution of
             %overlapping waveforms from the noise
+            %wv expects a single waveform to be resolved;
+            %shank expects an int
+
+            %CACHE ALL THIS ON THE class
+            [coeffs, clu_data] = self.get_fets(wvs{shank}, clus{shank});
+            templates = self.get_template_wvs(wvs, clus, shank);
+            [cands, sub_temps] = self.do_subtraction(wv, templates{shank});
+
+            %compute all pca's for new templates
+            %ALL BASED ON DIBA'S 54 samples
+            for i=1:length(cands)
+                cand_fets{i} = zeros(8, 3, 55);
+                for j=1:8
+                    test_fets1 = reshape(cands{i}(j, :, :), 54, [])'*coeffs{j}(:, 1);
+                    test_fets2 = reshape(cands{i}(j, :, :), 54, [])'*coeffs{j}(:, 2);
+                    test_fets3 = reshape(cands{i}(j, :, :), 54, [])'*coeffs{j}(:, 3);
+                    cand_fets{i}(j, :, :) = [test_fets1, test_fets2, test_fets3]';
+                end
+            end
+
+            %THIS IS GROSS
+            lcd = length(clu_data);
+
+            for i=1:length(cand_fets)
+                p{i} = zeros(lcd, 55);
+                for j=1:length(cand_fets{i})
+                    for k=1:lcd
+                        m = clu_data{k}(:, :, 1);
+                        s = clu_data{k}(:, :, 2);
+                        %compute (not a) probability for each candidate
+                        p{i}(k, j) = sum(sum(sum(abs(m - cand_fets{i}(:, :, j))./s)));
+                    end
+                end
+            end
+
+            coords = []; 
+            for i=1:length(cand_fets); 
+                coords = [coords; min(min(p{i})), find(p{i}==min(min(p{i})))]; 
+            end        
+
+            display(coords)
+            b = find(min(coords(:, 1))) %if THERE IS MORE THAN ONE, THROW A FIT
+
+            clu_set = unique(clus{shank});
+            clu_set = clu_set(find(clu_set ~= 0 & clu_set ~= 1));
+            subset = clu_set(sub_temps)
+            [k, j] = find(p{b}==coords(b));
+            clu1 = subset(b);
+            clu2 = clu_set(k);
+            wvfm = cands{b}(:, :, j);
+            epsilon = abs(27-j);
         end
 
     end
