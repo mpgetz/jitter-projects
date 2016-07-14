@@ -207,7 +207,7 @@ classdef WaveformMethods
             clu1 = subset(b);
             clu2 = clu_set(k);
             wvfm = cands{b}(:, :, j);
-            epsilon = abs(27-j);
+            epsilon = j-27;
         end
 
     end
