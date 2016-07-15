@@ -159,6 +159,10 @@ classdef WaveformMethods
             %overlapping waveforms from the noise
             %wv expects a single waveform to be resolved;
             %shank expects an int
+            %Output: wvfm returns subtracted wvfm
+            %   clu1 refers to the subtracted wave;
+            %   clu2 gives the cluster best matching wvfm
+            %   epsilon returns the offset distance between the putative waveforms
 
             %CACHE ALL THIS ON THE class
             [coeffs, clu_data] = self.get_fets(wvs{shank}, clus{shank});
@@ -194,15 +198,18 @@ classdef WaveformMethods
 
             coords = []; 
             for i=1:length(cand_fets); 
-                coords = [coords; min(min(p{i})), find(p{i}==min(min(p{i})))]; 
+                %what to do in case of ties?
+                val = min(min(p{i}));
+                loc = find(p{i}==min(min(p{i})));
+                coords = [coords; val(1), loc(1)]; 
             end        
 
             display(coords)
-            b = find(min(coords(:, 1))) %if THERE IS MORE THAN ONE, THROW A FIT
+            b = find(coords(:, 1)==min(coords(:, 1))) %if THERE IS MORE THAN ONE, THROW A FIT
 
             clu_set = unique(clus{shank});
             clu_set = clu_set(find(clu_set ~= 0 & clu_set ~= 1));
-            subset = clu_set(sub_temps)
+            subset = clu_set(sub_temps);
             [k, j] = find(p{b}==coords(b));
             clu1 = subset(b);
             clu2 = clu_set(k);
