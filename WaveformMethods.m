@@ -43,6 +43,7 @@ classdef WaveformMethods
         function [coeffs, clu_data] = get_fets(self, wvs, clus)
             %re-computes pca on waveset and stores top 3 coeff vectors for
             %eg. use with waveform subtraction, below
+            %wvs, clus expect 3-dimensional arrays
             
             %collect all waveforms from each channel & compute pca
             samples = 54;
@@ -63,6 +64,7 @@ classdef WaveformMethods
         end
 
         function [templates] = get_template_wvs(self, wvs, clus, shank)
+            %Creates template waveforms for each cluster on a specific shank
 	        %expects cells for wvs and clus. may make more flexible later
             %expects int for shank
 
@@ -159,8 +161,8 @@ classdef WaveformMethods
         function [wvfm, clu1, clu2, epsilon] = resolve_synch(self, wv, wvs, clus, shank)
             %collects methods to return most probable cluster resolution of
             %overlapping waveforms from the noise
-            %wv expects a single waveform to be resolved;
-            %shank expects an int
+            %Input: wv expects a single waveform to be resolved;
+            %   shank expects an int
             %Output: wvfm returns subtracted wvfm
             %   clu1 refers to the subtracted wave;
             %   clu2 gives the cluster best matching wvfm
@@ -171,16 +173,14 @@ classdef WaveformMethods
             templates = self.get_template_wvs(wvs, clus, shank);
             [cands, sub_temps] = self.do_subtraction(wv, templates{shank});
 
-            %compute all pca's for new templates
+            %compute all pc's for new templates
+            %10 pc's based on %var explained analysis
             %ALL BASED ON DIBA'S 54 samples
             for i=1:length(cands)
                 cand_fets{i} = zeros(8, 10, 55);
                 for j=1:8
+                    %convert candidate wvfms into pca space, with 10 pc's
                     test_fets = reshape(cands{i}(j, :, :), 54, [])'*coeffs{j}(:, 1:10);
-%                    test_fets1 = reshape(cands{i}(j, :, :), 54, [])'*coeffs{j}(:, 1);
-%                    test_fets2 = reshape(cands{i}(j, :, :), 54, [])'*coeffs{j}(:, 2);
-%                    test_fets3 = reshape(cands{i}(j, :, :), 54, [])'*coeffs{j}(:, 3);
-%                    cand_fets{i}(j, :, :) = [test_fets1, test_fets2, test_fets3]';
                     cand_fets{i}(j, :, :) = [test_fets]';
                 end
             end
@@ -188,13 +188,13 @@ classdef WaveformMethods
             %THIS IS GROSS
             lcd = length(clu_data);
 
+            %compute metric for each candidate
             for i=1:length(cand_fets)
                 p{i} = zeros(lcd, 55);
                 for j=1:length(cand_fets{i})
                     for k=1:lcd
                         m = clu_data{k}(:, :, 1);
                         s = clu_data{k}(:, :, 2);
-                        %compute (not a) probability for each candidate
                         p{i}(k, j) = sum(sum(sum(abs(m - cand_fets{i}(:, :, j))./s)));
                     end
                 end
@@ -203,6 +203,7 @@ classdef WaveformMethods
             coords = []; 
             for i=1:length(cand_fets); 
                 %what to do in case of ties?
+                %currently 'fails' silently by taking first value
                 val = min(min(p{i}));
                 loc = find(p{i}==min(min(p{i})));
                 coords = [coords; val(1), loc(1)]; 
