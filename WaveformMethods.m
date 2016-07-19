@@ -1,11 +1,14 @@
 classdef WaveformMethods
+    %Collection of methods for waveform analysis and manipulation
+    %Properties serve to cache data which is reused through repeated
+    % calls to a particular method.
+
     properties
         wv_set
         wv_mins
         wv_means
     end
 
-    %UNDER CONSTRUCTION
     methods
     %{
         function self = WaveformMethods(wvs)
@@ -29,8 +32,9 @@ classdef WaveformMethods
         end
      %}   
 
-        %helper function to find wv templates to subtract
         function [ref_wvs] = get_ref_wvs(self)
+            %helper function to find wv templates to subtract
+
             %find channel of max neg deflection
             channel = find(min(min(wv, [], 2)));
             ref_wvs = self.wv_mins(find(wv_mins(2, :) == channel));
@@ -51,11 +55,9 @@ classdef WaveformMethods
 
                 for j=1:length(u_clus)
                     clu = find(clus == u_clus(j));
-                    fets1 = vec{i}(clu, :)*coeffs{i}(:, 1);
-                    fets2 = vec{i}(clu, :)*coeffs{i}(:, 2);
-                    fets3 = vec{i}(clu, :)*coeffs{i}(:, 3);
-                    clu_data{j}(i, :, 1) = [mean(fets1), mean(fets2), mean(fets3)];                
-                    clu_data{j}(i, :, 2) = [std(fets1), std(fets2), std(fets3)];                
+                    fets = vec{i}(clu, :)*coeffs{i}(:, 1:10);
+                    clu_data{j}(i, :, 1) = [mean(fets)];                
+                    clu_data{j}(i, :, 2) = [std(fets)];                
                 end
             end
         end
@@ -172,12 +174,14 @@ classdef WaveformMethods
             %compute all pca's for new templates
             %ALL BASED ON DIBA'S 54 samples
             for i=1:length(cands)
-                cand_fets{i} = zeros(8, 3, 55);
+                cand_fets{i} = zeros(8, 10, 55);
                 for j=1:8
-                    test_fets1 = reshape(cands{i}(j, :, :), 54, [])'*coeffs{j}(:, 1);
-                    test_fets2 = reshape(cands{i}(j, :, :), 54, [])'*coeffs{j}(:, 2);
-                    test_fets3 = reshape(cands{i}(j, :, :), 54, [])'*coeffs{j}(:, 3);
-                    cand_fets{i}(j, :, :) = [test_fets1, test_fets2, test_fets3]';
+                    test_fets = reshape(cands{i}(j, :, :), 54, [])'*coeffs{j}(:, 1:10);
+%                    test_fets1 = reshape(cands{i}(j, :, :), 54, [])'*coeffs{j}(:, 1);
+%                    test_fets2 = reshape(cands{i}(j, :, :), 54, [])'*coeffs{j}(:, 2);
+%                    test_fets3 = reshape(cands{i}(j, :, :), 54, [])'*coeffs{j}(:, 3);
+%                    cand_fets{i}(j, :, :) = [test_fets1, test_fets2, test_fets3]';
+                    cand_fets{i}(j, :, :) = [test_fets]';
                 end
             end
 
