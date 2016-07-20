@@ -32,6 +32,35 @@ classdef WaveformMethods
         end
      %}   
 
+        function [ex, lag, clu1, clu2] = build_example(self, wvs, clus, shank)
+            %builds an example of random overlapping waveforms from data
+            % by selecting two existing waveforms from wvs and summing them
+            % with lag
+            %Output: ex is example wv.
+            %   lag is the randomly chosen offset 
+            %   clu1, clu2 give chosen clusters, for reference
+
+            clu_set = unique(clus{shank});
+            clu_set = clu_set(find(clu_set ~= 0 & clu_set ~= 1));
+
+            lag = randsample([-15:1:15], 1);
+            clu1 = randsample(clu_set, 1);
+            clu2 = randsample(clu_set, 1);
+
+            %insures refractory period is not violated
+            while clu1==clu2
+                clu2 = randsample(clu_set);
+            end
+            
+            wv1 = wvs{shank}(:, :, randsample(find(clus{shank}==clu1), 1));
+            wv2 = wvs{shank}(:, :, randsample(find(clus{shank}==clu2), 1));
+            if lag >= 0
+                ex = wv1 + [wv2(:, (54-lag)+1:end), wv2(:, 1:54-lag)];
+            else
+                ex = wv1 + [wv2(:, (54+lag)+1:end), wv2(:, 1:54+lag)];
+            end
+        end
+
         function [ref_wvs] = get_ref_wvs(self)
             %helper function to find wv templates to subtract
 
