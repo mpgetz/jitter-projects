@@ -158,6 +158,23 @@ classdef WaveformMethods
             end
         end
 
+        function [clu] = get_clu(self, wv, wvs, clus, shank)
+            %recomputes cluster value for given waveform based
+            % on local pca
+            %note: largely for verification; not independently useful
+
+            [coeffs, clu_data] = self.get_fets(wvs{shank}, clus{shank});
+            templates = self.get_template_wvs(wvs, clus, shank);
+
+            for i=1:length(cands)
+                cand_fets{i} = zeros(8, 10);
+                for j=1:8
+                    %convert candidate wvfms into pca space, with 10 pc's
+                    test_fets = reshape(cands{i}(j, :, :), 54, [])'*coeffs{j}(:, 1:10);
+                    cand_fets{i}(j, :, :) = [test_fets]';
+                end
+            end
+
         function [wvfm, clu1, clu2, epsilon] = resolve_synch(self, wv, wvs, clus, shank)
             %collects methods to return most probable cluster resolution of
             %overlapping waveforms from the noise
