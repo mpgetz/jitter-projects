@@ -166,14 +166,29 @@ classdef WaveformMethods
             [coeffs, clu_data] = self.get_fets(wvs{shank}, clus{shank});
             templates = self.get_template_wvs(wvs, clus, shank);
 
-            for i=1:length(cands)
-                cand_fets{i} = zeros(8, 10);
-                for j=1:8
-                    %convert candidate wvfms into pca space, with 10 pc's
-                    test_fets = reshape(cands{i}(j, :, :), 54, [])'*coeffs{j}(:, 1:10);
-                    cand_fets{i}(j, :, :) = [test_fets]';
-                end
+            cand_fets = zeros(8, 10);
+
+            %loop over all channels
+            for j=1:8
+                %convert candidate wvfms into pca space, with 10 pc's
+                test_fets = wv(j, :)*coeffs{j}(:, 1:10);
+                cand_fets(j, :) = [test_fets];
             end
+
+            p = zeros(length(clu_data), 1);
+
+            for k=1:length(clu_data)
+                m = clu_data{k}(:, :, 1);
+                s = clu_data{k}(:, :, 2);
+                p(k) = sum(sum(sum(abs(m - cand_fets)./s)));
+            end
+
+            clu_set = unique(clus{shank});
+            clu_set = clu_set(find(clu_set ~= 0 & clu_set ~= 1));
+            display(p)
+            loc = find(p == min(p))
+            clu = clu_set(loc)
+        end
 
         function [wvfm, clu1, clu2, epsilon] = resolve_synch(self, wv, wvs, clus, shank)
             %collects methods to return most probable cluster resolution of
