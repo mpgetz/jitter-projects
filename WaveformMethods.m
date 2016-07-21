@@ -75,10 +75,10 @@ classdef WaveformMethods
             %eg. use with waveform subtraction, below
             %wvs, clus expect 3-dimensional arrays
             
-            %collect all waveforms from each channel & compute pca
+            %collect all waveforms from each channel & do pca
             samples = 54;
-            u_clus = unique(clus);
-            u_clus = u_clus(find(u_clus ~= 0 & u_clus ~= 1));
+            u_clus = unique(clus)
+            %u_clus = u_clus(find(u_clus ~= 0 & u_clus ~= 1));
 
             for i=1:8
                 vec{i} = reshape(wvs(i, :, :), samples, [])';
