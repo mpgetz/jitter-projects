@@ -61,6 +61,7 @@ classdef WaveformMethods
             end
         end
 
+        %PROBABLY USELESS
         function [ref_wvs] = get_ref_wvs(self)
             %helper function to find wv templates to subtract
 

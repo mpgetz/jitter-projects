@@ -55,6 +55,17 @@ classdef PlotTools
             end
         end
 
+        function [] = plot_pcs(self, wvs, clus, coeffs, cand, varargin)
+            %Plots top 3 principal components for (optional) clusters specified in argin
+            %cand specifies an optional candidate waveform to compare against other clus
+            %TO DO: CONVERT THIS TO A STACKED, SCROLLABLE SET OF IMAGES
+
+            if isempty(varargin)
+                %plot all possible clus
+            end
+    
+        end
+
         %DON'T USE WITHOUT MODIFICATIONS
         %{
         function [] = plot_interval_wvs(self, wv_data, channel, samples, synch)
