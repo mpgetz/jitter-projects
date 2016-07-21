@@ -19,3 +19,12 @@ for i=1:8
     pc1(i, :, :) = reshape(fets1, 1, 3, []);
     pc2(i, :, :) = reshape(fets2, 1, 3, []);
 end
+
+j = 5;
+for i=1:3; 
+    subplot(1, 3, i); 
+    hold on; 
+    scatter(pc1(j, i, :), pc1(4, 1, :)); 
+    scatter(pc2(j, i, :), pc2(4, 1, :)); 
+    hold off; 
+end
