@@ -2,6 +2,8 @@
 
 function pca_ui(pcset1, pcset2, candidate)
     %ideal to change this to varargin in the future
+    %plot in blue is first cluster; plot in red is second
+    %asterisk in yellow is candidate point
 
     if nargin < 3
         candidate = [];
@@ -20,7 +22,7 @@ function pca_ui(pcset1, pcset2, candidate)
     if ~isempty(candidate)
         xc = candidate(1, :);
         yc = candidate(2, :);
-        sc = scatter(xc, yc, 'markertype', '*');
+        sc = scatter(xc, yc, '*');
     end
     hold off
 
@@ -43,6 +45,10 @@ function pca_ui(pcset1, pcset2, candidate)
         x2 = pcset2(source.Value, :);
         s1.XData = x1;
         s2.XData = x2;
+        if ~isempty(candidate)
+            xc = candidate(source.Value, :);
+            sc.XData = xc;
+        end
     end
 
     function setpc2(source, callbackdata)
@@ -50,5 +56,9 @@ function pca_ui(pcset1, pcset2, candidate)
         y2 = pcset2(source.Value, :);
         s1.YData = y1;
         s2.YData = y2;
+        if ~isempty(candidate)
+            yc = candidate(source.Value, :);
+            sc.YData = yc;
+        end
     end
 end

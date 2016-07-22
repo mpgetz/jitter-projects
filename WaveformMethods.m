@@ -77,7 +77,7 @@ classdef WaveformMethods
             
             %collect all waveforms from each channel & do pca
             samples = 54;
-            u_clus = unique(clus)
+            u_clus = unique(clus);
             %u_clus = u_clus(find(u_clus ~= 0 & u_clus ~= 1));
 
             for i=1:8
@@ -91,6 +91,35 @@ classdef WaveformMethods
                     clu_data{j}(i, :, 2) = [std(fets)];                
                 end
             end
+        end
+
+        function [pc1, pc2, cand] = get_pcs(self, clus, shank, clu1, clu2, candidate)
+            %As of now, a prep function for pca_ui input
+            %candidate is (presumably) a candidate waveform for comparison
+            % with existing clusters
+
+            samples = 54;
+
+            cs1 = wvs{shank}(:, :, find(clus{shank}==clu1));
+            cs2 = wvs{shank}(:, :, find(clus{shank}==clu2));
+
+            pc1 = zeros(8, 3, length(cs1));
+            pc2 = zeros(8, 3, length(cs2));
+            cand = zeros(8, 3);
+
+            for i=1:8
+                fets1 = reshape(cs1(i, :, :), 54, [])'*coeffs{i}(:, 1:3);
+                fets2 = reshape(cs2(i, :, :), 54, [])'*coeffs{i}(:, 1:3);
+                fetsc = candidate(i, :)*coeffs{i}(:, 1:3);
+                
+                pc1(i, :, :) = reshape(fets1, 1, 3, []);
+                pc2(i, :, :) = reshape(fets2, 1, 3, []);
+                cand(i, :) = fetsc;
+            end
+
+            pc1 = reshape(pc1, 24, []);
+            pc2 = reshape(pc2, 24, []);
+            cand = reshape(cand, 24, []);
         end
 
         function [templates] = get_template_wvs(self, wvs, clus, shank)
@@ -231,6 +260,8 @@ classdef WaveformMethods
             %   epsilon returns the offset distance between the putative waveforms
 
             %CACHE ALL THIS ON THE class
+            %IT MAKES SENSE TO INSTANTIATE AN INSTANCE OF THIS class
+            % WITH wv AND clu DATA
             [coeffs, clu_data] = self.get_fets(wvs{shank}, clus{shank});
             templates = self.get_template_wvs(wvs, clus, shank);
             [cands, sub_temps] = self.do_subtraction(wv, templates{shank});
@@ -277,7 +308,7 @@ classdef WaveformMethods
             clu_set = unique(clus{shank});
             clu_set = clu_set(find(clu_set ~= 0 & clu_set ~= 1));
             subset = clu_set(sub_temps);
-            [k, j] = find(p{b}==coords(b));
+            [k, j] = find(p{b}==coords(b, 1));
             clu1 = subset(b);
             clu2 = clu_set(k);
             wvfm = cands{b}(:, :, j);
