@@ -26,16 +26,17 @@ function pca_ui(pcset1, pcset2, candidate)
     end
     hold off
 
+    m = size(pcset1, 1)
     %horizontal slider
-    hsld = uicontrol('Style', 'slider', 'Min', 1, 'Max', 24, 'Value', 1);
+    hsld = uicontrol('Style', 'slider', 'Min', 1, 'Max', m, 'Value', 1);
     hsld.Position = [440, 10, 400, 20];
-    hsld.SliderStep = [1/23, 1/23];
+    hsld.SliderStep = [1/(m-1), 1/(m-1)];
     hsld.Callback = @setpc1
 
     %vertical slider
-    vsld = uicontrol('Style', 'slider', 'Min', 1, 'Max', 24, 'Value', 2);
+    vsld = uicontrol('Style', 'slider', 'Min', 1, 'Max', m, 'Value', 2);
     vsld.Position = [20, 10, 400, 20];
-    vsld.SliderStep = [1/23, 1/23];
+    vsld.SliderStep = [1/(m-1), 1/(m-1)];
     vsld.Callback = @setpc2
 
     xlabel(strcat('PC ', int2str(hsld.Value)));
