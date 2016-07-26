@@ -4,7 +4,7 @@ classdef WaveformMethods
     % calls to a particular method.
 
     properties
-        templates = []; %is a cell, should be an array
+        templates = [];
         coeffs = {};
         clu_data = [];
         clu_set = [];
@@ -12,8 +12,7 @@ classdef WaveformMethods
 
     methods
         function self = WaveformMethods(wvs, clus, shank)
-            %sets up functionality for spike overlap parsing given clustered waveforms
-            %should/could be moved to a separate method/class to isolate functionality
+            %class initialization function
 
             self.templates = self.get_template_wvs(wvs, clus, shank);
             [self.coeffs, self.clu_data] = self.get_fets(wvs{shank}, clus{shank});
@@ -263,17 +262,10 @@ classdef WaveformMethods
             %   clu2 gives the cluster best matching wvfm
             %   epsilon returns the offset distance between the putative waveforms
 
-            %CACHE ALL THIS ON THE class
-            %IT MAKES SENSE TO INSTANTIATE AN INSTANCE OF THIS class
-            % WITH wv AND clu DATA
-            %[coeffs, clu_data] = self.get_fets(wvs{shank}, clus{shank});
-            %templates = self.get_template_wvs(wvs, clus, shank);
-
             coeffs = self.coeffs;
             clu_data = self.clu_data;
             templates = self.templates;
             [cands, sub_temps] = self.do_subtraction(wv, templates);
-            %[cands, sub_temps] = self.do_subtraction(wv, templates{shank});
 
             %compute all pc's for new templates
             %10 pc's based on %var explained analysis

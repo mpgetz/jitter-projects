@@ -4,8 +4,8 @@ classdef PlotTools
     end
 
     methods
-        %init method
         function self = PlotTools(data_ref)
+            %init method
             if data_ref == 'y'
                 self.samples = 32;
             end
@@ -55,15 +55,41 @@ classdef PlotTools
             end
         end
 
-        function [] = plot_pcs(self, wvs, clus, coeffs, cand, varargin)
-            %Plots top 3 principal components for (optional) clusters specified in argin
-            %cand specifies an optional candidate waveform to compare against other clus
-            %TO DO: CONVERT THIS TO A STACKED, SCROLLABLE SET OF IMAGES
+        function [] = plot_wv_overlays(self, wvs, clus, clu_set, num)
+            %Plots overlayed series of random waveforms from a given cluster
+            %Input: clu_set takes an array of integers
+            %   wvs, clus, expect array (i.e. index into the cell)
 
-            if isempty(varargin)
-                %plot all possible clus
+            dim = size(wvs);
+            for i=1:length(clu_set)
+                c = clu_set(i);
+                pos = randsample(find(clus==c), num);
+                set = reshape(wvs(:, :, pos), dim(1), []);
+                min_amp = min(min(set));
+                max_amp = max(max(set));
+
+                x0 = 1;
+                xN = length(clu_set);
+                for y=x0:xN; 
+                    diff = xN-x0+1;
+                    %add optional array of timestamps here
+                    for j=1:8; 
+                        subplot(8, diff, (((y-x0)+1)+(diff*(j-1)))); 
+                        hold on;
+
+                        for k=1:num
+                            plot(wvs(j, :, pos(k))); 
+                            ylim([min_amp, max_amp]); 
+                            xlim([0, self.samples]);
+                        end
+                        hold off;
+
+                        if j == 1
+                            title(int2str(y));
+                        end
+                    end 
+                end            
             end
-    
         end
 
         %DON'T USE WITHOUT MODIFICATIONS
