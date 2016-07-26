@@ -68,26 +68,21 @@ classdef PlotTools
                 min_amp = min(min(set));
                 max_amp = max(max(set));
 
-                x0 = 1;
-                xN = length(clu_set);
-                for y=x0:xN; 
-                    diff = xN-x0+1;
-                    %add optional array of timestamps here
-                    for j=1:8; 
-                        subplot(8, diff, (((y-x0)+1)+(diff*(j-1)))); 
-                        hold on;
+                %add optional array of timestamps here
+                for j=1:8; 
+                    subplot(8, length(clu_set), ((i)+(length(clu_set)*(j-1)))); 
+                    hold on;
 
-                        for k=1:num
-                            plot(wvs(j, :, pos(k))); 
-                            ylim([min_amp, max_amp]); 
-                            xlim([0, self.samples]);
-                        end
-                        hold off;
+                    for k=1:num
+                        plot(wvs(j, :, pos(k))); 
+                        ylim([min_amp, max_amp]); 
+                        xlim([0, self.samples]);
+                    end
+                    hold off;
 
-                        if j == 1
-                            title(int2str(y));
-                        end
-                    end 
+                    if j == 1
+                        title(int2str(i));
+                    end
                 end            
             end
         end
