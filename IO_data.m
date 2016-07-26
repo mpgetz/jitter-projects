@@ -13,8 +13,9 @@ classdef IO_data
     end
 
     methods
-        %constructor method
         function self = IO_data(data_ref)
+            %constructor method
+
             if data_ref == 'y'
                 self.samples = 32;
                 self.rate = 20000;
@@ -182,4 +183,6 @@ interns: interneurons pulled from spike cell
 clu_x: (x int) imported cluster data
 wv_x: waveform array
 
+Some code above is modified from:
+http://fmatoolbox.sourceforge.net/API/index.html
 %}

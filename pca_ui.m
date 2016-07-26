@@ -26,18 +26,20 @@ function pca_ui(pcset1, pcset2, candidate)
     end
     hold off
 
-    %vertical slider
-    vsld = uicontrol('Style', 'slider', 'Min', 1, 'Max', 24, 'Value', 1);
-    vsld.Position = [20, 20, 400, 20];
-    vsld.SliderStep = [1/23, 1/23];
-    vsld.Callback = @setpc1
-
     %horizontal slider
-    hsld = uicontrol('Style', 'slider', 'Min', 1, 'Max', 24, 'Value', 2);
-    hsld.Position = [440, 20, 400, 20];
+    hsld = uicontrol('Style', 'slider', 'Min', 1, 'Max', 24, 'Value', 1);
+    hsld.Position = [440, 10, 400, 20];
     hsld.SliderStep = [1/23, 1/23];
-    hsld.Callback = @setpc2
+    hsld.Callback = @setpc1
 
+    %vertical slider
+    vsld = uicontrol('Style', 'slider', 'Min', 1, 'Max', 24, 'Value', 2);
+    vsld.Position = [20, 10, 400, 20];
+    vsld.SliderStep = [1/23, 1/23];
+    vsld.Callback = @setpc2
+
+    xlabel(strcat('PC ', int2str(hsld.Value)));
+    ylabel(strcat('PC ', int2str(vsld.Value)));
     f.Visible = 'on';
 
     function setpc1(source, callbackdata)
@@ -49,6 +51,7 @@ function pca_ui(pcset1, pcset2, candidate)
             xc = candidate(source.Value, :);
             sc.XData = xc;
         end
+        xlabel(strcat('PC ', int2str(hsld.Value)));
     end
 
     function setpc2(source, callbackdata)
@@ -60,5 +63,6 @@ function pca_ui(pcset1, pcset2, candidate)
             yc = candidate(source.Value, :);
             sc.YData = yc;
         end
+        ylabel(strcat('PC ', int2str(vsld.Value)));
     end
 end
