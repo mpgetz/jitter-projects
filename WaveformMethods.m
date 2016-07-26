@@ -4,33 +4,36 @@ classdef WaveformMethods
     % calls to a particular method.
 
     properties
-        wv_set
-        wv_mins
-        wv_means
+        templates = []; %is a cell, should be an array
+        coeffs = {};
+        clu_data = [];
+        clu_set = [];
     end
 
     methods
-    %{
-        function self = WaveformMethods(wvs)
-        %sets up functionality for spike overlap parsing given clustered waveforms
-        %should/could be moved to a separate method/class to isolate functionality
-            self.wv_set = wvs;
-            
-            %derive array of min value/channel refs
-            for i=1:38 
-                self.wv_mins(1, i) = min(min(ms{i}, [], 2)); 
-                self.wv_mins(2, i) = find(min(ms{i}, [], 2) == self.wv_mins(1, i)); 
-            end
+        function self = WaveformMethods(wvs, clus, shank)
+            %sets up functionality for spike overlap parsing given clustered waveforms
+            %should/could be moved to a separate method/class to isolate functionality
 
-            %derive means of clustered waveforms (needs knowledge of cluster structure)
-            m = {}; 
-            u = unique(clus{2}); 
-            for i=1:length(u); 
-                n = find(clus{2}==u(i)); 
-                m{i} = wvs{2}(:, :, n); 
-            end
+            self.templates = self.get_template_wvs(wvs, clus, shank);
+            [self.coeffs, self.clu_data] = self.get_fets(wvs{shank}, clus{shank});
+            self.clu_set = unique(clus{shank}); 
+%            self.wv_set = wvs;
+%            
+%            %derive array of min value/channel refs
+%            for i=1:38 
+%                self.wv_mins(1, i) = min(min(ms{i}, [], 2)); 
+%                self.wv_mins(2, i) = find(min(ms{i}, [], 2) == self.wv_mins(1, i)); 
+%            end
+%
+%            %derive means of clustered waveforms (needs knowledge of cluster structure)
+%            m = {}; 
+%            u = unique(clus{2}); 
+%            for i=1:length(u); 
+%                n = find(clus{2}==u(i)); 
+%                m{i} = wvs{2}(:, :, n); 
+%            end
         end
-     %}   
 
         function [ex, lag, clu1, clu2] = build_example(self, wvs, clus, shank)
             %builds an example of random overlapping waveforms from data
@@ -93,12 +96,13 @@ classdef WaveformMethods
             end
         end
 
-        function [pc1, pc2, cand] = get_pcs(self, clus, shank, clu1, clu2, candidate)
+        function [pc1, pc2, cand] = get_pcs(self, wvs, clus, shank, clu1, clu2, candidate)
             %As of now, a prep function for pca_ui input
             %candidate is (presumably) a candidate waveform for comparison
             % with existing clusters
 
             samples = 54;
+            coeffs = self.coeffs;
 
             cs1 = wvs{shank}(:, :, find(clus{shank}==clu1));
             cs2 = wvs{shank}(:, :, find(clus{shank}==clu2));
@@ -147,7 +151,7 @@ classdef WaveformMethods
                     avg = mean(wvs{i}(:, :, find(clus{i}==clu_set(j))), 3);
                     avgs = [avgs, avg];
                 end
-                templates{i} = reshape(avgs, 8, 54, []);
+                templates = reshape(avgs, 8, 54, []);
                 %sort template waves 
 
                 %for wv=1:size(wvs{i}, 3)
@@ -249,7 +253,7 @@ classdef WaveformMethods
             clu = clu_set(loc)
         end
 
-        function [wvfm, clu1, clu2, epsilon] = resolve_synch(self, wv, wvs, clus, shank)
+        function [wvfm, clu1, clu2, epsilon] = resolve_synch(self, wv) %wvs, clus, shank
             %collects methods to return most probable cluster resolution of
             %overlapping waveforms from the noise
             %Input: wv expects a single waveform to be resolved;
@@ -262,9 +266,14 @@ classdef WaveformMethods
             %CACHE ALL THIS ON THE class
             %IT MAKES SENSE TO INSTANTIATE AN INSTANCE OF THIS class
             % WITH wv AND clu DATA
-            [coeffs, clu_data] = self.get_fets(wvs{shank}, clus{shank});
-            templates = self.get_template_wvs(wvs, clus, shank);
-            [cands, sub_temps] = self.do_subtraction(wv, templates{shank});
+            %[coeffs, clu_data] = self.get_fets(wvs{shank}, clus{shank});
+            %templates = self.get_template_wvs(wvs, clus, shank);
+
+            coeffs = self.coeffs;
+            clu_data = self.clu_data;
+            templates = self.templates;
+            [cands, sub_temps] = self.do_subtraction(wv, templates);
+            %[cands, sub_temps] = self.do_subtraction(wv, templates{shank});
 
             %compute all pc's for new templates
             %10 pc's based on %var explained analysis
@@ -305,7 +314,8 @@ classdef WaveformMethods
             display(coords)
             b = find(coords(:, 1)==min(coords(:, 1))) %if THERE IS MORE THAN ONE, THROW A FIT
 
-            clu_set = unique(clus{shank});
+            clu_set = self.clu_set;
+%            clu_set = unique(clus{shank});
             clu_set = clu_set(find(clu_set ~= 0 & clu_set ~= 1));
             subset = clu_set(sub_temps);
             [k, j] = find(p{b}==coords(b, 1));
