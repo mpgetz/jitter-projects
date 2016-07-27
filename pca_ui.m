@@ -10,6 +10,7 @@ function pca_ui(pcset1, pcset2, candidate)
     end
 
     f = figure('Visible', 'off', 'Position', [100, 100, 1000, 600]);
+
     hold on
     x1 = pcset1(1, :);
     y1 = pcset1(2, :);
@@ -29,19 +30,21 @@ function pca_ui(pcset1, pcset2, candidate)
     m = size(pcset1, 1)
     %horizontal slider
     hsld = uicontrol('Style', 'slider', 'Min', 1, 'Max', m, 'Value', 1);
-    hsld.Position = [440, 10, 400, 20];
+    hsld.Position = [550, 10, 400, 20];
     hsld.SliderStep = [1/(m-1), 1/(m-1)];
     hsld.Callback = @setpc1
 
     %vertical slider
     vsld = uicontrol('Style', 'slider', 'Min', 1, 'Max', m, 'Value', 2);
-    vsld.Position = [20, 10, 400, 20];
+    vsld.Position = [100, 10, 400, 20];
     vsld.SliderStep = [1/(m-1), 1/(m-1)];
     vsld.Callback = @setpc2
 
     xlabel(strcat('PC ', int2str(hsld.Value)));
     ylabel(strcat('PC ', int2str(vsld.Value)));
     f.Visible = 'on';
+    legend('PC1', 'PC2', 'Candidate');
+    legend('show');
 
     function setpc1(source, callbackdata)
         x1 = pcset1(source.Value, :);

@@ -12,6 +12,8 @@ classdef PlotTools
         end
 
         function [] = plot_wvs(self, wv_data, x0, xN, pos, step)
+            %Plots waveform data with channels down columns
+
             figure;
             %pos is position of synchronous spikes (from fet file)
             %x0 is start value, xN is end value; m is step size (wrt pos)
