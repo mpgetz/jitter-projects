@@ -12,7 +12,7 @@ classdef WaveformMethods
 
     methods
         function self = WaveformMethods(wvs, clus, shank)
-            %class initialization function
+            %class init function
 
             self.templates = self.get_template_wvs(wvs, clus, shank);
             [self.coeffs, self.clu_data] = self.get_fets(wvs{shank}, clus{shank});
@@ -168,37 +168,21 @@ classdef WaveformMethods
             %(used in resolve_synch to ID clu of interest)
             %assumes templates is 8x54x[] %%NEED TO GENERALIZE
 
-            %crude first pass based on max deflection (abs min)
-
-            %{
-            %compute primary channels for templates
-            primary_channel = [];
-            mins = reshape(min(templates, [], 2), 8, size(templates, 3));
-            maxs = min(mins, [], 1);
-            for i=1:size(templates, 3)
-                primary_channel(i) = find(maxs(i)==mins(:, i));
-            end
-
-            target = min(shell, [], 2);
-            first_channel = find(target==min(target));
-            %select templates which have matching max deflection
-            sub_temps = find(primary_channel==first_channel);
-            %}
             %THIS IS A HACK
             sub_temps = [1:size(templates, 3)];
 
             candidates = {};
 
             for i=1:length(sub_temps)
-                stack = repmat(shell, 1, 1, 54+1);
+                stack = repmat(shell, 1, 1, 54);
 
-                for j=0:54
+                for j=0:53
                     m = templates(:, :, sub_temps(i));
 
                     if j < 27
                         ref = [m(:, 27-j:end), zeros(8, 27-j-1)];     
                     else
-                        ref = [zeros(8, j-27), m(:, 1:54-(j-27))];     
+                        ref = [zeros(8, (j+1)-27), m(:, 1:54-((j+1)-27))];     
                     end
 
                     wv = stack(:, :, j+1) - ref;
@@ -223,7 +207,7 @@ classdef WaveformMethods
         function [clu] = get_clu(self, wv, wvs, clus, shank)
             %recomputes cluster value for given waveform based
             % on local pca
-            %note: largely for verification; not independently useful
+            %note: largely for verification
 
             [coeffs, clu_data] = self.get_fets(wvs{shank}, clus{shank});
             templates = self.get_template_wvs(wvs, clus, shank);
@@ -307,7 +291,6 @@ classdef WaveformMethods
             b = find(coords(:, 1)==min(coords(:, 1))) %if THERE IS MORE THAN ONE, THROW A FIT
 
             clu_set = self.clu_set;
-%            clu_set = unique(clus{shank});
             clu_set = clu_set(find(clu_set ~= 0 & clu_set ~= 1));
             subset = clu_set(sub_temps);
             [k, j] = find(p{b}==coords(b, 1));
