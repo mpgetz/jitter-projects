@@ -245,6 +245,8 @@ classdef WaveformMethods
             %   clu1 refers to the subtracted wave;
             %   clu2 gives the cluster best matching wvfm
             %   epsilon returns the offset distance between the putative waveforms
+            %NOTE: at present, a 'top ten list' is returned for all above variables,
+            % in order, for manual post hoc curation
 
             coeffs = self.coeffs;
             clu_data = self.clu_data;
@@ -255,7 +257,7 @@ classdef WaveformMethods
             %10 pc's based on %var explained analysis
             %ALL BASED ON DIBA'S 54 samples
             for i=1:length(cands)
-                cand_fets{i} = zeros(8, 10, 55);
+                cand_fets{i} = zeros(8, 10, 54);
                 for j=1:8
                     %convert candidate wvfms into pca space, with 10 pc's
                     test_fets = reshape(cands{i}(j, :, :), 54, [])'*coeffs{j}(:, 1:10);
@@ -263,12 +265,12 @@ classdef WaveformMethods
                 end
             end
 
-            %THIS IS GROSS
             lcd = length(clu_data);
 
+            %THIS IS GROSS
             %compute metric for each candidate
             for i=1:length(cand_fets)
-                p{i} = zeros(lcd, 55);
+                p{i} = zeros(lcd, 54);
                 for j=1:length(cand_fets{i})
                     for k=1:lcd
                         m = clu_data{k}(:, :, 1);
@@ -280,23 +282,33 @@ classdef WaveformMethods
 
             coords = []; 
             for i=1:length(cand_fets); 
-                %what to do in case of ties?
-                %currently 'fails' silently by taking first value
                 val = min(min(p{i}));
+                index = i; 
                 loc = find(p{i}==min(min(p{i})));
-                coords = [coords; val(1), loc(1)]; 
+                if length(loc) > 1
+                    val = repmat(val, length(loc), 1);
+                    index = repmat(index, length(loc), 1);
+                end
+                coords = [coords; index, val, loc']; 
             end        
 
-            display(coords)
-            b = find(coords(:, 1)==min(coords(:, 1))) %if THERE IS MORE THAN ONE, THROW A FIT
+            rank = sortrows(coords, 2);
+            %for now, take top ten results
+            rank = rank(1:10, :);
+            display(rank)
+            %b = find(coords(:, 1)==min(coords(:, 1))) 
 
             clu_set = self.clu_set;
             clu_set = clu_set(find(clu_set ~= 0 & clu_set ~= 1));
-            subset = clu_set(sub_temps);
-            [k, j] = find(p{b}==coords(b, 1));
-            clu1 = subset(b);
+            %subset = clu_set(sub_temps);
+
+            %[k, j] = find(p{b}==coords(b, 1));
+            [k, j] = ind2sub([lcd, 54], rank(:, 3));
+            clu1 = clu_set(rank(:, 1));
             clu2 = clu_set(k);
-            wvfm = cands{b}(:, :, j);
+            for i=1:10
+                wvfm(:, :, i) = cands{rank(i, 1)}(:, :, j(i));
+            end
             epsilon = j-27;
         end
 
