@@ -16,7 +16,12 @@ classdef WaveformMethods
 
             self.templates = self.get_template_wvs(wvs, clus, shank);
             [self.coeffs, self.clu_data] = self.get_fets(wvs{shank}, clus{shank});
-            self.clu_set = unique(clus{shank}); 
+            %FOR NOW, clus MUST BE A CELL
+            if ~iscell(clus)
+                self.clu_set = unique(clus); 
+            else
+                self.clu_set = unique(clus{shank}); 
+            end
 %            self.wv_set = wvs;
 %            
 %            %derive array of min value/channel refs
