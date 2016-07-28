@@ -270,17 +270,25 @@ classdef WaveformMethods
                 end
             end
 
+            clu_set = self.clu_set;
+            subset = find(clu_set ~= 0 & clu_set ~= 1);
+            clu_set = clu_set(subset);
+
+            clu_data = clu_data(subset);
             lcd = length(clu_data);
+            display(lcd)
 
             %THIS IS GROSS
             %compute metric for each candidate
             for i=1:length(cand_fets)
                 p{i} = zeros(lcd, 54);
-                for j=1:length(cand_fets{i})
+                for j=1:size(cand_fets{i}, 3)
                     for k=1:lcd
                         m = clu_data{k}(:, :, 1);
                         s = clu_data{k}(:, :, 2);
-                        p{i}(k, j) = sum(sum(sum(abs(m - cand_fets{i}(:, :, j))./s)));
+                        %p{i}(k, j) = sum(sum(sum(abs(m - cand_fets{i}(:, :, j))./s)));
+                        temp = sort(sum(abs(m - cand_fets{i}(:, :, j))./s, 2));
+                        p{i}(k, j) = mean(temp(1:3));
                     end
                 end
             end
@@ -303,13 +311,10 @@ classdef WaveformMethods
             display(rank)
             %b = find(coords(:, 1)==min(coords(:, 1))) 
 
-            clu_set = self.clu_set;
-            clu_set = clu_set(find(clu_set ~= 0 & clu_set ~= 1));
-            %subset = clu_set(sub_temps);
-
             %[k, j] = find(p{b}==coords(b, 1));
             [k, j] = ind2sub([lcd, 54], rank(:, 3));
             clu1 = clu_set(rank(:, 1));
+            display(k)
             clu2 = clu_set(k);
             for i=1:10
                 wvfm(:, :, i) = cands{rank(i, 1)}(:, :, j(i));
