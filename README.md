@@ -20,3 +20,8 @@ Methods centered around a waveform resolution function, aimed at separating spat
 
 ## PlotTools
 Helpful plotting tools specific to electrophys datasets. 
+* plot_wvs plots either a single or multiple waveforms with shank channels plotted down a column.
+* plot_wv_overlays reproduces Klusters-type plotting of waveforms by overlapping multiple samples from the dataset.
+
+## Stand-alone functions
+* pca_ui is a figure generator to visualize PC space (in progress; currently works for two clusters and a candidate waveform).
