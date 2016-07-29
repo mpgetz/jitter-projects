@@ -59,8 +59,16 @@ classdef PlotTools
 
         function [] = plot_wv_overlays(self, wvs, clus, clu_set, num)
             %Plots overlayed series of random waveforms from a given cluster
+            % reproduces the waveform feature in Klusters
             %Input: clu_set takes an array of integers
             %   wvs, clus, expect array (i.e. index into the cell)
+
+            %To plot all input wvs overlayed
+            if nargin < 3
+                clus = [1:size(wvs, 3)];
+                clu_set = clus;
+                num = 1;
+            end
 
             dim = size(wvs);
             for i=1:length(clu_set)
