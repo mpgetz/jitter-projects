@@ -22,21 +22,6 @@ classdef WaveformMethods
             else
                 self.clu_set = unique(clus{shank}); 
             end
-%            self.wv_set = wvs;
-%            
-%            %derive array of min value/channel refs
-%            for i=1:38 
-%                self.wv_mins(1, i) = min(min(ms{i}, [], 2)); 
-%                self.wv_mins(2, i) = find(min(ms{i}, [], 2) == self.wv_mins(1, i)); 
-%            end
-%
-%            %derive means of clustered waveforms (needs knowledge of cluster structure)
-%            m = {}; 
-%            u = unique(clus{2}); 
-%            for i=1:length(u); 
-%                n = find(clus{2}==u(i)); 
-%                m{i} = wvs{2}(:, :, n); 
-%            end
         end
 
         function [ex, lag, clu1, clu2] = build_example(self, wvs, clus, shank)
@@ -286,7 +271,9 @@ classdef WaveformMethods
                     for k=1:lcd
                         m = clu_data{k}(:, :, 1);
                         s = clu_data{k}(:, :, 2);
+                        %original metric
                         %p{i}(k, j) = sum(sum(sum(abs(m - cand_fets{i}(:, :, j))./s)));
+                        %modified metric based on mean of min channel values
                         temp = sort(sum(abs(m - cand_fets{i}(:, :, j))./s, 2));
                         p{i}(k, j) = mean(temp(1:3));
                     end
