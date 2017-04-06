@@ -50,9 +50,11 @@ classdef TrainMethods
             end
         end
 
+        %MAKE THIS MORE FLEXIBLE
         function [] = raster(varargin)
         % generates raster plot of input spike trains
-            args = varargin(:, [2:end]);
+        % expects vectors of spike times
+            args = varargin(:, [2:end])
             l = length(args);
 
             figure
